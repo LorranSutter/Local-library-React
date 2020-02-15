@@ -13,7 +13,6 @@ var catalogRouter = require('./routes/catalog');
 var mongoose = require('mongoose');
 
 //Set up default mongoose connection
-// var mongoDB = 'mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library?retryWrites=true&w=majority';
 var dev_db_url = 'mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library?retryWrites=true&w=majority';
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true });
