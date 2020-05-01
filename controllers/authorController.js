@@ -1,6 +1,6 @@
 const async = require('async');
-const { body, validationResult } = require('express-validator/check');
-const { sanitizeBody } = require('express-validator/filter');
+const { body, validationResult } = require('express-validator');
+const { sanitizeBody } = require('express-validator');
 
 const Book = require('../models/book');
 const Author = require('../models/author');
@@ -115,7 +115,7 @@ exports.author_delete_get = function (req, res, next) {
         // Successful, so render.
         res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books });
     });
-
+    
 };
 
 // Handle Author delete on POST.
@@ -147,6 +147,7 @@ exports.author_delete_post = function (req, res, next) {
     });
 };
 
+// TODO Author update
 // Display Author update form on GET.
 exports.author_update_get = function (req, res) {
     res.send('NOT IMPLEMENTED: Author update GET');
