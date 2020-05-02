@@ -1,6 +1,5 @@
 const async = require('async');
-const { body, validationResult } = require('express-validator');
-const { sanitizeBody } = require('express-validator');
+const validator = require('express-validator');
 
 const Book = require('../models/book');
 const Author = require('../models/author');
@@ -107,19 +106,31 @@ exports.book_create_post = [
     },
 
     // Validate fields.
-    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
-    body('author', 'Author must not be empty.').trim().isLength({ min: 1 }),
-    body('summary', 'Summary must not be empty.').trim().isLength({ min: 1 }),
-    body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }),
+    validator
+        .body('title', 'Title must not be empty.')
+        .trim()
+        .isLength({ min: 1 }),
+    validator
+        .body('author', 'Author must not be empty.')
+        .trim()
+        .isLength({ min: 1 }),
+    validator
+        .body('summary', 'Summary must not be empty.')
+        .trim()
+        .isLength({ min: 1 }),
+    validator
+        .body('isbn', 'ISBN must not be empty')
+        .trim()
+        .isLength({ min: 1 }),
 
     // Sanitize fields (using wildcard).
-    sanitizeBody('*').escape(),
+    validator.sanitizeBody('*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
 
         // Extract the validation errors from a request.
-        const errors = validationResult(req);
+        const errors = validator.validationResult(req);
 
         // Create a Book object with escaped and trimmed data.
         var book = new Book(
@@ -177,8 +188,6 @@ exports.book_delete_get = function (req, res) {
             BookInstance.find({ 'book': req.params.id }).exec(callback)
         },
     }, function (err, results) {
-        console.log('book instances');
-        console.log(results.bookinstances);
         if (err) { return next(err); }
         if (results.book == null) { // No results.
             res.redirect('/catalog/book');
@@ -269,23 +278,31 @@ exports.book_update_post = [
     },
 
     // Validate fields.
-    body('title', 'Title must not be empty.').trim().isLength({ min: 1 }),
-    body('author', 'Author must not be empty.').trim().isLength({ min: 1 }),
-    body('summary', 'Summary must not be empty.').trim().isLength({ min: 1 }),
-    body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }),
+    validator.body('title', 'Title must not be empty.')
+        .trim()
+        .isLength({ min: 1 }),
+    validator.body('author', 'Author must not be empty.')
+        .trim()
+        .isLength({ min: 1 }),
+    validator.body('summary', 'Summary must not be empty.')
+        .trim()
+        .isLength({ min: 1 }),
+    validator.body('isbn', 'ISBN must not be empty')
+        .trim()
+        .isLength({ min: 1 }),
 
     // Sanitize fields.
-    sanitizeBody('title').escape(),
-    sanitizeBody('author').escape(),
-    sanitizeBody('summary').escape(),
-    sanitizeBody('isbn').escape(),
-    sanitizeBody('genre.*').escape(),
+    validator.sanitizeBody('title').escape(),
+    validator.sanitizeBody('author').escape(),
+    validator.sanitizeBody('summary').escape(),
+    validator.sanitizeBody('isbn').escape(),
+    validator.sanitizeBody('genre.*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
 
         // Extract the validation errors from a request.
-        const errors = validationResult(req);
+        const errors = validator.validationResult(req);
 
         // Create a Book object with escaped/trimmed data and old id.
         var book = new Book(
