@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 //Set up default mongoose connection
-const dev_db_url = 'mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library?retryWrites=true&w=majority';
+const dev_db_url = 'DATABASE-URL';
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true, useFindAndModify: true });
 
