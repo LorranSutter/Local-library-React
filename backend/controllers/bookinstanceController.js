@@ -4,6 +4,7 @@ const validator = require('express-validator');
 const Book = require('../models/book');
 const BookInstance = require('../models/bookinstance');
 
+// TODO Turn bookinstance list into API
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res, next) {
 
@@ -16,6 +17,7 @@ exports.bookinstance_list = function (req, res, next) {
         });
 };
 
+// TODO Turn bookinstance detail into API
 // Display detail page for a specific BookInstance.
 exports.bookinstance_detail = function (req, res, next) {
 
@@ -33,6 +35,7 @@ exports.bookinstance_detail = function (req, res, next) {
         })
 };
 
+// TODO Turn bookinstance create get into API
 // Display BookInstance create form on GET.
 exports.bookinstance_create_get = function (req, res, next) {
 
@@ -45,6 +48,7 @@ exports.bookinstance_create_get = function (req, res, next) {
 
 };
 
+// TODO Turn bookinstance create post into API
 // Handle BookInstance create on POST.
 exports.bookinstance_create_post = [
 
@@ -102,6 +106,7 @@ exports.bookinstance_create_post = [
     }
 ];
 
+// TODO Turn bookinstance delete get into API
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = function (req, res) {
 
@@ -117,6 +122,7 @@ exports.bookinstance_delete_get = function (req, res) {
 
 };
 
+// TODO Turn bookinstance delete post into API
 // Handle BookInstance delete on POST.
 exports.bookinstance_delete_post = function (req, res) {
 
@@ -136,7 +142,7 @@ exports.bookinstance_delete_post = function (req, res) {
 
 };
 
-// TODO Bookinstance update
+// TODO Turn bookinstance update get into API
 // Display BookInstance update form on GET.
 exports.bookinstance_update_get = function (req, res) {
 
@@ -161,6 +167,7 @@ exports.bookinstance_update_get = function (req, res) {
 
 };
 
+// TODO Turn bookinstance update post into API
 // Handle bookinstance update on POST.
 exports.bookinstance_update_post = [
 

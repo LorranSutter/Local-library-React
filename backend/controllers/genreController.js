@@ -4,6 +4,7 @@ const validator = require('express-validator');
 const Genre = require('../models/genre');
 const Book = require('../models/book');
 
+// TODO Turn genre list into API
 // Display list of all Genre.
 exports.genre_list = function (req, res, next) {
 
@@ -16,6 +17,7 @@ exports.genre_list = function (req, res, next) {
         });
 };
 
+// TODO Turn genre detail into API
 // Display detail page for a specific Genre.
 exports.genre_detail = function (req, res, next) {
 
@@ -43,11 +45,13 @@ exports.genre_detail = function (req, res, next) {
 
 };
 
+// TODO Turn genre create get into API
 // Display Genre create form on GET.
 exports.genre_create_get = function (req, res) {
     res.render('genre_form', { title: 'Create Genre' });
 };
 
+// TODO Turn genre create post into API
 // Handle Genre create on POST.
 exports.genre_create_post = [
 
@@ -103,6 +107,7 @@ exports.genre_create_post = [
     }
 ];
 
+// TODO Turn genre delete get into API
 // Display Genre delete form on GET.
 exports.genre_delete_get = function (req, res) {
 
@@ -124,6 +129,7 @@ exports.genre_delete_get = function (req, res) {
 
 };
 
+// TODO Turn genre delete post into API
 // Handle Genre delete on POST.
 exports.genre_delete_post = function (req, res) {
 
@@ -154,6 +160,7 @@ exports.genre_delete_post = function (req, res) {
 
 };
 
+// TODO Turn genre update get into API
 // Display Genre update form on GET.
 exports.genre_update_get = function (req, res) {
 
@@ -175,6 +182,7 @@ exports.genre_update_get = function (req, res) {
 
 };
 
+// TODO Turn genre update post into API
 // Handle Genre update on POST.
 exports.genre_update_post = [
 

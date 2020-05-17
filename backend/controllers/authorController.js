@@ -4,6 +4,7 @@ const validator = require('express-validator');
 const Book = require('../models/book');
 const Author = require('../models/author');
 
+// TODO Turn author list into API
 // Display list of all Authors.
 exports.author_list = function (req, res, next) {
 
@@ -18,6 +19,7 @@ exports.author_list = function (req, res, next) {
 
 };
 
+// TODO Turn author detail into API
 // Display detail page for a specific Author.
 exports.author_detail = function (req, res, next) {
 
@@ -43,11 +45,13 @@ exports.author_detail = function (req, res, next) {
 
 };
 
+// TODO Turn author create get into API
 // Display Author create form on GET.
 exports.author_create_get = function (req, res, next) {
     res.render('author_form', { title: 'Create Author' });
 };
 
+// TODO Turn author create post into API
 // Handle Author create on POST.
 exports.author_create_post = [
 
@@ -112,6 +116,7 @@ exports.author_create_post = [
     }
 ];
 
+// TODO Turn author delete get into API
 // Display Author delete form on GET.
 exports.author_delete_get = function (req, res, next) {
 
@@ -133,6 +138,7 @@ exports.author_delete_get = function (req, res, next) {
 
 };
 
+// TODO Turn author delete post into API
 // Handle Author delete on POST.
 exports.author_delete_post = function (req, res, next) {
 
@@ -162,6 +168,7 @@ exports.author_delete_post = function (req, res, next) {
     });
 };
 
+// TODO Turn author update get into API
 // Display Author update form on GET.
 exports.author_update_get = function (req, res) {
 
@@ -183,6 +190,7 @@ exports.author_update_get = function (req, res) {
 
 };
 
+// TODO Turn author update post into API
 // Handle Author update on POST.
 exports.author_update_post = [
 

@@ -6,7 +6,7 @@ const Author = require('../models/author');
 const Genre = require('../models/genre');
 const BookInstance = require('../models/bookinstance');
 
-
+// TODO Turn book index into API
 exports.index = function (req, res) {
 
     function renderCB(err, results) {
@@ -32,6 +32,7 @@ exports.index = function (req, res) {
     }, renderCB);
 };
 
+// TODO Turn book list into API
 // Display list of all Books.
 exports.book_list = function (req, res, next) {
 
@@ -45,6 +46,7 @@ exports.book_list = function (req, res, next) {
 
 };
 
+// TODO Turn book detail into API
 // Display detail page for a specific book.
 exports.book_detail = function (req, res, next) {
 
@@ -74,6 +76,7 @@ exports.book_detail = function (req, res, next) {
 
 };
 
+// TODO Turn book create get into API
 // Display book create form on GET.
 exports.book_create_get = function (req, res, next) {
 
@@ -92,6 +95,7 @@ exports.book_create_get = function (req, res, next) {
 
 };
 
+// TODO Turn book create post into API
 // Handle book create on POST.
 exports.book_create_post = [
     // Convert the genre to an array.
@@ -177,6 +181,7 @@ exports.book_create_post = [
     }
 ];
 
+// TODO Turn book delete get into API
 // Display book delete form on GET.
 exports.book_delete_get = function (req, res) {
 
@@ -198,6 +203,7 @@ exports.book_delete_get = function (req, res) {
 
 };
 
+// TODO Turn book delete post into API
 // Handle book delete on POST.
 exports.book_delete_post = function (req, res) {
 
@@ -228,6 +234,7 @@ exports.book_delete_post = function (req, res) {
 
 };
 
+// TODO Turn book update get into API
 // Display book update form on GET.
 exports.book_update_get = function (req, res, next) {
 
@@ -263,6 +270,7 @@ exports.book_update_get = function (req, res, next) {
 
 };
 
+// TODO Turn book update post into API
 // Handle book update on POST.
 exports.book_update_post = [
 
