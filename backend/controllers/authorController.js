@@ -52,6 +52,7 @@ exports.author_create_get = function (req, res, next) {
 };
 
 // TODO Turn author create post into API
+// TODO Move author create post to middleware
 // Handle Author create on POST.
 exports.author_create_post = [
 
@@ -62,28 +63,32 @@ exports.author_create_post = [
         .trim()
         .withMessage('First name must be specified.')
         .isAlphanumeric()
-        .withMessage('First name has non-alphanumeric characters.'),
+        .withMessage('First name has non-alphanumeric characters.')
+        .escape(),
     validator
         .body('family_name')
         .isLength({ min: 1 })
         .trim()
         .withMessage('Family name must be specified.')
         .isAlphanumeric()
-        .withMessage('Family name has non-alphanumeric characters.'),
+        .withMessage('Family name has non-alphanumeric characters.')
+        .escape(),
     validator
         .body('date_of_birth', 'Invalid date of birth')
         .optional({ checkFalsy: true })
-        .isISO8601(),
+        .isISO8601()
+        .escape(),
     validator
         .body('date_of_death', 'Invalid date of death')
         .optional({ checkFalsy: true })
-        .isISO8601(),
+        .isISO8601()
+        .escape(),
 
     // Sanitize fields.
-    validator.sanitizeBody('first_name').escape(),
-    validator.sanitizeBody('family_name').escape(),
-    validator.sanitizeBody('date_of_birth').toDate(),
-    validator.sanitizeBody('date_of_death').toDate(),
+    // validator.sanitizeBody('first_name').escape(),
+    // validator.sanitizeBody('family_name').escape(),
+    // validator.sanitizeBody('date_of_birth').toDate(),
+    // validator.sanitizeBody('date_of_death').toDate(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -191,6 +196,7 @@ exports.author_update_get = function (req, res) {
 };
 
 // TODO Turn author update post into API
+// TODO Move author update post to middleware
 // Handle Author update on POST.
 exports.author_update_post = [
 
@@ -201,28 +207,32 @@ exports.author_update_post = [
         .trim()
         .withMessage('First name must be specified.')
         .isAlphanumeric()
-        .withMessage('First name has non-alphanumeric characters.'),
+        .withMessage('First name has non-alphanumeric characters.')
+        .escape(),
     validator
         .body('family_name')
         .isLength({ min: 1 })
         .trim()
         .withMessage('Family name must be specified.')
         .isAlphanumeric()
-        .withMessage('Family name has non-alphanumeric characters.'),
+        .withMessage('Family name has non-alphanumeric characters.')
+        .escape(),
     validator
         .body('date_of_birth', 'Invalid date of birth')
         .optional({ checkFalsy: true })
-        .isISO8601(),
+        .isISO8601()
+        .escape(),
     validator
         .body('date_of_death', 'Invalid date of death')
         .optional({ checkFalsy: true })
-        .isISO8601(),
+        .isISO8601()
+        .escape(),
 
     // Sanitize fields.
-    validator.sanitizeBody('first_name').escape(),
-    validator.sanitizeBody('family_name').escape(),
-    validator.sanitizeBody('date_of_birth').toDate(),
-    validator.sanitizeBody('date_of_death').toDate(),
+    // validator.sanitizeBody('first_name').escape(),
+    // validator.sanitizeBody('family_name').escape(),
+    // validator.sanitizeBody('date_of_birth').toDate(),
+    // validator.sanitizeBody('date_of_death').toDate(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {

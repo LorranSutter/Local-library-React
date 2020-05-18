@@ -49,26 +49,32 @@ exports.bookinstance_create_get = function (req, res, next) {
 };
 
 // TODO Turn bookinstance create post into API
+// TODO Move bookinstance create post to middleware
 // Handle BookInstance create on POST.
 exports.bookinstance_create_post = [
 
     // Validate fields.
-    validator.body('book', 'Book must be specified')
+    validator
+        .body('book', 'Book must be specified')
         .trim()
-        .isLength({ min: 1 }),
-    validator.body('imprint', 'Imprint must be specified')
+        .isLength({ min: 1 })
+        .escape(),
+    validator
+        .body('imprint', 'Imprint must be specified')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
     validator
         .body('due_back', 'Invalid date')
         .optional({ checkFalsy: true })
-        .isISO8601(),
+        .isISO8601()
+        .escape(),
 
     // Sanitize fields.
-    validator.sanitizeBody('book').escape(),
-    validator.sanitizeBody('imprint').escape(),
-    validator.sanitizeBody('status').trim().escape(),
-    validator.sanitizeBody('due_back').toDate(),
+    // validator.sanitizeBody('book').escape(),
+    // validator.sanitizeBody('imprint').escape(),
+    // validator.sanitizeBody('status').trim().escape(),
+    // validator.sanitizeBody('due_back').toDate(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -168,26 +174,32 @@ exports.bookinstance_update_get = function (req, res) {
 };
 
 // TODO Turn bookinstance update post into API
+// TODO Move bookinstance update post to middleware
 // Handle bookinstance update on POST.
 exports.bookinstance_update_post = [
 
     // Validate fields.
-    validator.body('book', 'Book must be specified')
+    validator
+        .body('book', 'Book must be specified')
         .trim()
-        .isLength({ min: 1 }),
-    validator.body('imprint', 'Imprint must be specified')
+        .isLength({ min: 1 })
+        .escape(),
+    validator
+        .body('imprint', 'Imprint must be specified')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
     validator
         .body('due_back', 'Invalid date')
         .optional({ checkFalsy: true })
-        .isISO8601(),
+        .isISO8601()
+        .escape(),
 
     // Sanitize fields.
-    validator.sanitizeBody('book').escape(),
-    validator.sanitizeBody('imprint').escape(),
-    validator.sanitizeBody('status').trim().escape(),
-    validator.sanitizeBody('due_back').toDate(),
+    // validator.sanitizeBody('book').escape(),
+    // validator.sanitizeBody('imprint').escape(),
+    // validator.sanitizeBody('status').trim().escape(),
+    // validator.sanitizeBody('due_back').toDate(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {

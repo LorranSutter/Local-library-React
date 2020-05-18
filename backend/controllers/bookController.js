@@ -96,6 +96,7 @@ exports.book_create_get = function (req, res, next) {
 };
 
 // TODO Turn book create post into API
+// TODO Move book create post to middlware
 // Handle book create on POST.
 exports.book_create_post = [
     // Convert the genre to an array.
@@ -113,22 +114,26 @@ exports.book_create_post = [
     validator
         .body('title', 'Title must not be empty.')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
     validator
         .body('author', 'Author must not be empty.')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
     validator
         .body('summary', 'Summary must not be empty.')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
     validator
         .body('isbn', 'ISBN must not be empty')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
 
     // Sanitize fields (using wildcard).
-    validator.sanitizeBody('*').escape(),
+    // validator.sanitizeBody('*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
@@ -271,6 +276,7 @@ exports.book_update_get = function (req, res, next) {
 };
 
 // TODO Turn book update post into API
+// TODO Move book update post to middleware
 // Handle book update on POST.
 exports.book_update_post = [
 
@@ -286,25 +292,33 @@ exports.book_update_post = [
     },
 
     // Validate fields.
-    validator.body('title', 'Title must not be empty.')
+    validator
+        .body('title', 'Title must not be empty.')
         .trim()
-        .isLength({ min: 1 }),
-    validator.body('author', 'Author must not be empty.')
+        .isLength({ min: 1 })
+        .escape(),
+    validator
+        .body('author', 'Author must not be empty.')
         .trim()
-        .isLength({ min: 1 }),
-    validator.body('summary', 'Summary must not be empty.')
+        .isLength({ min: 1 })
+        .escape(),
+    validator
+        .body('summary', 'Summary must not be empty.')
         .trim()
-        .isLength({ min: 1 }),
-    validator.body('isbn', 'ISBN must not be empty')
+        .isLength({ min: 1 })
+        .escape(),
+    validator
+        .body('isbn', 'ISBN must not be empty')
         .trim()
-        .isLength({ min: 1 }),
+        .isLength({ min: 1 })
+        .escape(),
 
     // Sanitize fields.
-    validator.sanitizeBody('title').escape(),
-    validator.sanitizeBody('author').escape(),
-    validator.sanitizeBody('summary').escape(),
-    validator.sanitizeBody('isbn').escape(),
-    validator.sanitizeBody('genre.*').escape(),
+    // validator.sanitizeBody('title').escape(),
+    // validator.sanitizeBody('author').escape(),
+    // validator.sanitizeBody('summary').escape(),
+    // validator.sanitizeBody('isbn').escape(),
+    // validator.sanitizeBody('genre.*').escape(),
 
     // Process request after validation and sanitization.
     (req, res, next) => {
