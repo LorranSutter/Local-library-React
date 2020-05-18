@@ -7,6 +7,9 @@ const author_controller = require('../controllers/authorController');
 const genre_controller = require('../controllers/genreController');
 const book_instance_controller = require('../controllers/bookinstanceController');
 
+const genre_validator = require('../middlewares/genreValidator');
+const { validate } = require('../middlewares/validate');
+
 /// BOOK ROUTES ///
 
 // GET catalog home page.
@@ -64,23 +67,14 @@ router.get('/authors', author_controller.author_list);
 
 /// GENRE ROUTES ///
 
-// GET request for creating a Genre. NOTE This must come before route that displays Genre (uses id).
-router.get('/genre/create', genre_controller.genre_create_get);
-
 //POST request for creating Genre.
-router.post('/genre/create', genre_controller.genre_create_post);
+router.post('/genre/create', genre_validator.validator, validate, genre_controller.genre_create_post);
 
-// GET request to delete Genre.
-router.get('/genre/:id/delete', genre_controller.genre_delete_get);
+// DELETE request to delete Genre.
+router.delete('/genre/:id', genre_controller.genre_delete);
 
-// POST request to delete Genre.
-router.post('/genre/:id/delete', genre_controller.genre_delete_post);
-
-// GET request to update Genre.
-router.get('/genre/:id/update', genre_controller.genre_update_get);
-
-// POST request to update Genre.
-router.post('/genre/:id/update', genre_controller.genre_update_post);
+// PUT request to update Genre.
+router.put('/genre/:id', genre_validator.validator, validate, genre_controller.genre_update);
 
 // GET request for one Genre.
 router.get('/genre/:id', genre_controller.genre_detail);
