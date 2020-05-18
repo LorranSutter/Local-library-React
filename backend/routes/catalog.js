@@ -7,6 +7,7 @@ const author_controller = require('../controllers/authorController');
 const genre_controller = require('../controllers/genreController');
 const book_instance_controller = require('../controllers/bookinstanceController');
 
+const author_validator = require('../middlewares/authorValidator');
 const genre_validator = require('../middlewares/genreValidator');
 const { validate } = require('../middlewares/validate');
 
@@ -41,23 +42,14 @@ router.get('/books', book_controller.book_list);
 
 /// AUTHOR ROUTES ///
 
-// GET request for creating Author. NOTE This must come before route for id (i.e. display author).
-router.get('/author/create', author_controller.author_create_get);
-
 // POST request for creating Author.
-router.post('/author/create', author_controller.author_create_post);
+router.post('/author/create', author_validator.validator, validate, author_controller.author_create);
 
-// GET request to delete Author.
-router.get('/author/:id/delete', author_controller.author_delete_get);
+// DELTE request to delete Author.
+router.delete('/author/:id', author_controller.author_delete);
 
-// POST request to delete Author.
-router.post('/author/:id/delete', author_controller.author_delete_post);
-
-// GET request to update Author.
-router.get('/author/:id/update', author_controller.author_update_get);
-
-// POST request to update Author.
-router.post('/author/:id/update', author_controller.author_update_post);
+// PUT request to update Author.
+router.put('/author/:id', author_validator.validator, validate, author_controller.author_update);
 
 // GET request for one Author.
 router.get('/author/:id', author_controller.author_detail);
@@ -68,7 +60,7 @@ router.get('/authors', author_controller.author_list);
 /// GENRE ROUTES ///
 
 //POST request for creating Genre.
-router.post('/genre/create', genre_validator.validator, validate, genre_controller.genre_create_post);
+router.post('/genre/create', genre_validator.validator, validate, genre_controller.genre_create);
 
 // DELETE request to delete Genre.
 router.delete('/genre/:id', genre_controller.genre_delete);
