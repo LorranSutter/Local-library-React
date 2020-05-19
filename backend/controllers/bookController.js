@@ -90,7 +90,7 @@ exports.book_create = (req, res, next) => {
     });
 }
 
-// Handle book delete on POST.
+// Handle book delete on DELETE.
 exports.book_delete = function (req, res, next) {
 
     async.parallel({
@@ -98,7 +98,7 @@ exports.book_delete = function (req, res, next) {
             Book.findById(req.params.id).exec(callback)
         },
         bookinstances: function (callback) {
-            BookInstance.find({ 'book': req.params.id }).exec(callback)
+            BookInstance.find({ 'book': req.params.id }, { 'id': 1 }).exec(callback)
         },
     }, function (err, results) {
         if (err) { return next(err); }
@@ -124,7 +124,7 @@ exports.book_delete = function (req, res, next) {
 
 };
 
-// Handle book update on POST.
+// Handle book update on PUT.
 exports.book_update = (req, res, next) => {
 
     // Create a Book object with escaped/trimmed data and old id.
