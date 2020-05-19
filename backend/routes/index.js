@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', function (req, res) {
-  res.redirect('/catalog');
-});
+const book_controller = require('../controllers/catalogController');
+
+router.get('/', book_controller.index);
+
+router.get('/catalog', book_controller.index);
 
 module.exports = router;
