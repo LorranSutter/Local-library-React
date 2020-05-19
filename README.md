@@ -1,10 +1,10 @@
-# Local Library
+# Local Library - React
 
-Tutorial from [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website) to build a Local Library using [Express JS](http://expressjs.com/)
+This project is an extension of a previous version of a tutorial from [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website) to build a Local Library using [Express JS](http://expressjs.com/).
 
-Part of BCDV1007 - Full Stack Development II from [Blockchain Development](https://www.georgebrown.ca/programs/blockchain-development-program-t175/) program from [George Brown College](https://www.georgebrown.ca)
+This application was developed using React as frontend, but also you can check this application implemented using Pug template [here](https://github.com/LorranSutter/Local-library).
 
-## :runner: How to run
+<!-- ## :runner: How to run
 
 Open your terminal in the folder you want to clone the project
 
@@ -33,13 +33,13 @@ Then you may populate your database using the following command:
 
 ```sh
 node populatedb.js
-```
+``` -->
 
 ## :book: Resources and technologies :computer:
 
 - [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website)
 - [Express](http://expressjs.com/)
-- [Pug](https://pugjs.org/api/getting-started.html)
 - [MongoDB](https://www.mongodb.com/)
 - [Async](https://caolan.github.io/async/v3/)
 - [Express validator](https://express-validator.github.io/docs/)
+- [ReactJS](https://reactjs.org/)
