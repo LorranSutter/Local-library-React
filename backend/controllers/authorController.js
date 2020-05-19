@@ -48,6 +48,7 @@ exports.author_create = (req, res, next) => {
             date_of_birth: req.body.date_of_birth,
             date_of_death: req.body.date_of_death
         });
+
     author.save(function (err, doc) {
         if (err) { return next(err); }
         res.status(201).json({ id: doc.id, message: `Author ${doc.first_name} created successfully` });
