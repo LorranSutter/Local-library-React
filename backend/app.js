@@ -11,11 +11,6 @@ const genreRouter = require('./routes/genre');
 const bookRouter = require('./routes/book');
 const bookInstanceRouter = require('./routes/bookInstance');
 
-const InitiateMongoServer = require('./connectionDB');
-
-// Initiate Mongo Server
-InitiateMongoServer();
-
 const app = express();
 
 // view engine setup

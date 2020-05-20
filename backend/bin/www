@@ -4,6 +4,11 @@
  * Module dependencies.
  */
 
+const InitiateMongoServer = require('../connectionDB');
+
+// Initiate Mongo Server
+InitiateMongoServer();
+
 var app = require('../app');
 var debug = require('debug')('local-library:server');
 var http = require('http');
