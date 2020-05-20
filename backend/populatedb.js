@@ -2,24 +2,15 @@
 
 console.log('This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0-mbdj7.mongodb.net/local_library?retryWrites=true');
 
-// Get arguments passed on command line
-const userArgs = process.argv.slice(2);
-/*
-if (!userArgs[0].startsWith('mongodb')) {
-    console.log('ERROR: You need to specify a valid mongodb URL as the first argument');
-    return
-}
-*/
 const async = require('async')
 const Book = require('./models/book')
 const Author = require('./models/author')
 const Genre = require('./models/genre')
 const BookInstance = require('./models/bookinstance')
 
-
 const mongoose = require('mongoose');
-const mongoDB = userArgs[0];
-mongoose.connect(mongoDB, { useNewUrlParser: true });
+const mongoDB = "mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library?retryWrites=true&w=majority";
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -41,7 +32,7 @@ function authorCreate(first_name, family_name, d_birth, d_death, cb) {
       cb(err, null)
       return
     }
-    console.log('New Author: ' + author);
+    console.log('New Author: ' + author.first_name);
     authors.push(author)
     cb(null, author)
   });
@@ -55,7 +46,7 @@ function genreCreate(name, cb) {
       cb(err, null);
       return;
     }
-    console.log('New Genre: ' + genre);
+    console.log('New Genre: ' + genre.name);
     genres.push(genre)
     cb(null, genre);
   });
@@ -76,7 +67,7 @@ function bookCreate(title, summary, isbn, author, genre, cb) {
       cb(err, null)
       return
     }
-    console.log('New Book: ' + book);
+    console.log('New Book: ' + book.title);
     books.push(book)
     cb(null, book)
   });
@@ -98,7 +89,7 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
       cb(err, null)
       return
     }
-    console.log('New BookInstance: ' + bookinstance);
+    console.log('New BookInstance of: ' + bookinstance.book.title);
     bookinstances.push(bookinstance)
     cb(null, book)
   });
@@ -206,20 +197,29 @@ function createBookInstances(cb) {
     cb);
 }
 
-
+function deleteDatabse(cb) {
+  console.log('Deleting database');
+  db.dropDatabase();
+  console.log('Detabase deleted');
+  cb();
+}
 
 async.series([
+  deleteDatabse,
   createGenreAuthors,
   createBooks,
   createBookInstances
 ],
   // Optional callback
-  function (err, results) {
+  function (err) {
     if (err) {
       console.log('FINAL ERR: ' + err);
     }
     else {
-      console.log('BOOKInstances: ' + bookinstances);
+      console.log('Authors: ' + authors.length);
+      console.log('Genres: ' + genres.length);
+      console.log('Books: ' + books.length);
+      console.log('BOOKInstances: ' + bookinstances.length);
 
     }
     // All done, disconnect from database
