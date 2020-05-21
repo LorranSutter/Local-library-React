@@ -38,8 +38,10 @@ node populatedb.js
 ## :book: Resources and technologies :computer:
 
 - [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website)
+- [Endpoint testing](https://zellwk.com/blog/endpoint-testing/)
 - [Express](http://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
 - [Async](https://caolan.github.io/async/v3/)
 - [Express validator](https://express-validator.github.io/docs/)
 - [ReactJS](https://reactjs.org/)
+- [Jest](https://jestjs.io/)
