@@ -25,7 +25,10 @@ describe('Genre', () => {
     });
 
     afterEach(async () => {
-        await mongoose.connection.db.dropCollection('genres');
+        const genreCollection = await mongoose.connection.db.listCollections({ name: 'genres' }).toArray();
+        if (genreCollection.length !== 0) {
+            await mongoose.connection.db.dropCollection('genres');
+        }
     })
 
     it('Creates a new genre', done => {
@@ -64,6 +67,18 @@ describe('Genre', () => {
             });
     });
 
+    it('Cannot create genre, because name is missing', async done => {
+        request
+            .post('/catalog/genre/create')
+            .end(function (err, res) {
+                if (err) return done(err);
+
+                expect(res.status).toBe(422);
+                expect(res.body.errors).toContainEqual({ name: "Genre name required" });
+
+                done();
+            });
+    });
 
     it('Gets genre list', async done => {
         const newGenre1 = { "name": randomString(10) };
@@ -200,6 +215,22 @@ describe('Genre', () => {
                 expect(res.status).toBe(404);
                 expect(res.body.error.status).toBe(404);
                 expect(res.body.error.message).toBe(`Genre ${newGenreId} not found`);
+
+                done();
+            });
+    });
+
+    it('Cannot update genre, because name is missing', async done => {
+        const newGenre = { "name": randomString(10) };
+        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+
+        request
+            .put(`/catalog/genre/${resCreate.body.id}`)
+            .end(function (err, res) {
+                if (err) return done(err);
+
+                expect(res.status).toBe(422);
+                expect(res.body.errors).toContainEqual({ name: "Genre name required" });
 
                 done();
             });
