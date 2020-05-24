@@ -1,8 +1,9 @@
 const app = require('../app');
 const randomGenerator = require('./randomGenerator');
-const Book = require('../models/book');
 const Author = require('../models/author');
 const Genre = require('../models/genre');
+const Book = require('../models/book');
+const Bookinstance = require('../models/bookinstance');
 
 const supertest = require('supertest')
 const request = supertest(app);
@@ -119,6 +120,9 @@ describe('Book', () => {
         const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
         const resCreate = await newBook.save();
 
+        const newBookInstance = new Bookinstance(randomGenerator.generateBookInstance(resCreate.id));
+        const savedBookInstance = await newBookInstance.save();
+
         request
             .get(`/catalog/book/${resCreate.id}`)
             .end(function (err, res) {
@@ -140,7 +144,13 @@ describe('Book', () => {
                     ])
                 );
 
-                expect(res.body.book_instances).toStrictEqual([]);
+                expect(res.body.book_instances).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedBookInstance.id
+                        })
+                    ])
+                );
 
                 done();
             });
@@ -216,6 +226,42 @@ describe('Book', () => {
                 expect(res.status).toBe(404);
                 expect(res.body.error.status).toBe(404);
                 expect(res.body.error.message).toBe(`Book ${newBookId} not found`);
+
+                done();
+            });
+    });
+
+    it('Cannot delete book, because it has book instances associated', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+        const resCreate = await newBook.save();
+
+        const newBookInstance = new Bookinstance(randomGenerator.generateBookInstance(resCreate.id));
+        const savedBookInstance = await newBookInstance.save();
+
+        request
+            .delete(`/catalog/book/${resCreate.id}`)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(409);
+                expect(res.body.error.status).toBe(409);
+                expect(res.body.error.message).toBe(`Book ${resCreate.id} cannot be deleted because it has books instances associated`);
+                expect(res.body.error.data.book_instances.length).toBe(1);
+
+                expect(res.body.error.data.book_instances).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedBookInstance.id
+                        })
+                    ])
+                );
 
                 done();
             });
@@ -300,8 +346,4 @@ describe('Book', () => {
                 done();
             });
     });
-
-    //TODO Cannot delete book because there are associated bookinstances
-    //TODO Book detail with bookinstances
-
 });

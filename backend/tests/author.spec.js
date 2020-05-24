@@ -1,6 +1,8 @@
 const app = require('../app');
 const randomGenerator = require('./randomGenerator');
 const Author = require('../models/author');
+const Genre = require('../models/genre');
+const Book = require('../models/book');
 
 const supertest = require('supertest')
 const request = supertest(app);
@@ -116,8 +118,13 @@ describe('Author', () => {
 
     it('Gets author detail', async done => {
         const newAuthor = new Author(randomGenerator.generateAuthor());
-
         const resCreate = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(resCreate.id, [savedGenre.id]));
+        const savedBook = await newBook.save();
 
         request
             .get(`/catalog/author/${resCreate.id}`)
@@ -129,7 +136,14 @@ describe('Author', () => {
                 expect(res.body.author._id).toBe(resCreate.id);
                 expect(res.body.author.first_name).toBe(newAuthor.first_name);
                 expect(res.body.author.family_name).toBe(newAuthor.family_name);
-                expect(res.body.author_books).toStrictEqual([]);
+
+                expect(res.body.author_books).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedBook.id
+                        }),
+                    ])
+                );
 
                 done();
             });
@@ -190,6 +204,39 @@ describe('Author', () => {
                 expect(res.status).toBe(404);
                 expect(res.body.error.status).toBe(404);
                 expect(res.body.error.message).toBe(`Author ${newAuthorId} not found`);
+
+                done();
+            });
+    });
+
+    it('Cannot delete author, because it has books associated', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const resCreate = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(resCreate.id, [savedGenre.id]));
+        const savedBook = await newBook.save();
+
+        request
+            .delete(`/catalog/author/${resCreate.id}`)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(409);
+                expect(res.body.error.status).toBe(409);
+                expect(res.body.error.message).toBe(`Author ${resCreate.id} cannot be deleted because it has books associated`);
+                expect(res.body.error.data.author_books.length).toBe(1);
+
+                expect(res.body.error.data.author_books).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedBook.id
+                        })
+                    ])
+                );
 
                 done();
             });
@@ -278,8 +325,4 @@ describe('Author', () => {
                 done();
             });
     });
-
-
-    //TODO Cannot delete author because there are associated books
-    //TODO Author detail with books
 });

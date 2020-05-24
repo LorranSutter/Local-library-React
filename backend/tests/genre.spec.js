@@ -1,6 +1,8 @@
 const app = require('../app');
 const randomGenerator = require('./randomGenerator');
+const Author = require('../models/author');
 const Genre = require('../models/genre');
+const Book = require('../models/book');
 
 const supertest = require('supertest')
 const request = supertest(app);
@@ -107,16 +109,19 @@ describe('Genre', () => {
                     ])
                 );
 
-
-
                 done();
             });
     });
 
     it('Gets genre detail', async done => {
-        const newGenre = new Genre(randomGenerator.generateGenre());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
 
+        const newGenre = new Genre(randomGenerator.generateGenre());
         const resCreate = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [resCreate.id]));
+        const savedBook = await newBook.save();
 
         request
             .get(`/catalog/genre/${resCreate.id}`)
@@ -127,7 +132,14 @@ describe('Genre', () => {
                 expect(res.status).toBe(200);
                 expect(res.body.genre._id).toBe(resCreate.id);
                 expect(res.body.genre.name).toBe(newGenre.name);
-                expect(res.body.genre_books).toStrictEqual([]);
+
+                expect(res.body.genre_books).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedBook.id
+                        })
+                    ])
+                );
 
                 done();
             });
@@ -193,6 +205,39 @@ describe('Genre', () => {
             });
     });
 
+    it('Cannot delete genre, because it has books associated', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const resCreate = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [resCreate.id]));
+        const savedBook = await newBook.save();
+
+        request
+            .delete(`/catalog/genre/${resCreate.id}`)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(409);
+                expect(res.body.error.status).toBe(409);
+                expect(res.body.error.message).toBe(`Genre ${resCreate.id} cannot be deleted because it has books associated`);
+                expect(res.body.error.data.genre_books.length).toBe(1);
+
+                expect(res.body.error.data.genre_books).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedBook.id
+                        })
+                    ])
+                );
+
+                done();
+            });
+    });
+
     it('Updates genre', async done => {
         const newGenre1 = new Genre(randomGenerator.generateGenre());
         const newGenre2 = new Genre(randomGenerator.generateGenre());
@@ -251,7 +296,4 @@ describe('Genre', () => {
                 done();
             });
     });
-
-    //TODO Cannot delete genre because there are associated books
-    //TODO Genre detail with books
 });
