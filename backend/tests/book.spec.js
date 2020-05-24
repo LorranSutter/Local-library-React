@@ -21,28 +21,12 @@ describe('Book', () => {
             useFindAndModify: false
         });
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
-        mongoose.connection.dropDatabase();
+        await mongoose.connection.dropDatabase();
     });
 
     afterAll(async () => {
+        await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
-    });
-
-    afterEach(async () => {
-        const genreCollection = await mongoose.connection.db.listCollections({ name: 'genres' }).toArray();
-        if (genreCollection.length !== 0) {
-            await mongoose.connection.db.dropCollection('genres');
-        }
-
-        const authorCollection = await mongoose.connection.db.listCollections({ name: 'authors' }).toArray();
-        if (authorCollection.length !== 0) {
-            await mongoose.connection.db.dropCollection('authors');
-        }
-
-        const bookCollection = await mongoose.connection.db.listCollections({ name: 'books' }).toArray();
-        if (bookCollection.length !== 0) {
-            await mongoose.connection.db.dropCollection('books');
-        }
     });
 
     it('Creates a new book', async done => {
@@ -78,7 +62,7 @@ describe('Book', () => {
                 expect(res.body.errors).toContainEqual({ "title": "Title must not be empty." });
                 expect(res.body.errors).toContainEqual({ "author": "Author must not be empty." });
                 expect(res.body.errors).toContainEqual({ "summary": "Summary must not be empty." });
-                expect(res.body.errors).toContainEqual({ "isbn": "ISBN must not be empty" });
+                expect(res.body.errors).toContainEqual({ "isbn": "ISBN must not be empty." });
 
                 done();
             });
@@ -95,9 +79,9 @@ describe('Book', () => {
         const newBook2 = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
         const newBook3 = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
 
-        await newBook1.save();
-        await newBook2.save();
-        await newBook3.save();
+        const resCreate1 = await newBook1.save();
+        const resCreate2 = await newBook2.save();
+        const resCreate3 = await newBook3.save();
 
         request
             .get('/catalog/books')
@@ -106,13 +90,27 @@ describe('Book', () => {
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.book_list.length).toBe(3);
+                expect(res.body.book_list.length).toBeGreaterThanOrEqual(3);
+
+                expect(res.body.book_list).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: resCreate1.id
+                        }),
+                        expect.objectContaining({
+                            _id: resCreate2.id
+                        }),
+                        expect.objectContaining({
+                            _id: resCreate3.id
+                        })
+                    ])
+                );
 
                 done();
             });
     });
 
-    it.only('Gets book detail', async done => {
+    it('Gets book detail', async done => {
         const newAuthor = new Author(randomGenerator.generateAuthor());
         const savedAuthor = await newAuthor.save();
 
@@ -125,22 +123,185 @@ describe('Book', () => {
         request
             .get(`/catalog/book/${resCreate.id}`)
             .end(function (err, res) {
-                console.log(savedGenre.id)
-                console.log(res.body)
-                console.log(res.body.book.genre)
+
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
                 expect(res.body.book.title).toBe(newBook.title);
                 expect(res.body.book.author._id).toBe(savedAuthor.id);
                 expect(res.body.book.summary).toBe(newBook.summary);
-                // TODO check id in the genre list
-                expect(res.body.book.genre._id).toBe(savedGenre.id);
+                expect(res.body.book.genre.length).toBe(1);
+
+                expect(res.body.book.genre).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: savedGenre.id
+                        })
+                    ])
+                );
+
                 expect(res.body.book_instances).toStrictEqual([]);
 
                 done();
             });
     });
 
+    it('Book not found in detail', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+        const resCreate = await newBook.save();
+
+        const newBookId = randomGenerator.changeId(resCreate.id);
+
+        request
+            .get(`/catalog/book/${newBookId}`)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(404);
+                expect(res.body.error.status).toBe(404);
+                expect(res.body.error.message).toBe(`Book ${newBookId} not found`);
+
+                done();
+            });
+    });
+
+    it('Deletes a book', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+        const resCreate = await newBook.save();
+
+        request
+            .delete(`/catalog/book/${resCreate.id}`)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(200);
+                expect(res.body.message).toBe(`Book ${resCreate.id} deleted successfully`)
+
+                done();
+            });
+    });
+
+    it('Book not found in delete', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+        const resCreate = await newBook.save();
+
+        const newBookId = randomGenerator.changeId(resCreate.id);
+
+        request
+            .delete(`/catalog/book/${newBookId}`)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(404);
+                expect(res.body.error.status).toBe(404);
+                expect(res.body.error.message).toBe(`Book ${newBookId} not found`);
+
+                done();
+            });
+    });
+
+    it('Updates book', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook1 = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+        const newBook2 = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+
+        const resCreate = await newBook1.save();
+
+        request
+            .put(`/catalog/book/${resCreate.id}`)
+            .send(newBook2)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(200);
+                expect(res.body.message).toBe(`Book ${resCreate.id} updated successfully`)
+
+                done();
+            });
+    });
+
+    it('Book not found in update', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+
+        const resCreate = await newBook.save();
+
+        const newBookId = randomGenerator.changeId(resCreate.id);
+
+        request
+            .put(`/catalog/book/${newBookId}`)
+            .send(newBook)
+            .end(function (err, res) {
+
+                if (err) return done(err);
+
+                expect(res.status).toBe(404);
+                expect(res.body.error.status).toBe(404);
+                expect(res.body.error.message).toBe(`Book ${newBookId} not found`);
+
+                done();
+            });
+    });
+
+    it('Cannot update book, because all fields are missing', async done => {
+        const newAuthor = new Author(randomGenerator.generateAuthor());
+        const savedAuthor = await newAuthor.save();
+
+        const newGenre = new Genre(randomGenerator.generateGenre());
+        const savedGenre = await newGenre.save();
+
+        const newBook = new Book(randomGenerator.generateBook(savedAuthor.id, [savedGenre.id]));
+
+        const resCreate = await newBook.save();
+
+        request
+            .put(`/catalog/book/${resCreate.id}`)
+            .end(function (err, res) {
+                if (err) return done(err);
+
+                expect(res.status).toBe(422);
+                expect(res.body.errors).toContainEqual({ "title": "Title must not be empty." });
+                expect(res.body.errors).toContainEqual({ "author": "Author must not be empty." });
+                expect(res.body.errors).toContainEqual({ "summary": "Summary must not be empty." });
+                expect(res.body.errors).toContainEqual({ "isbn": "ISBN must not be empty." });
+
+                done();
+            });
+    });
+
+    //TODO Cannot delete book because there are associated bookinstances
+    //TODO Book detail with bookinstances
 
 });
