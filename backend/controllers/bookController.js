@@ -70,7 +70,7 @@ exports.book_delete = function (req, res, next) {
         book: function (callback) {
             Book.findById(req.params.id).exec(callback)
         },
-        bookinstances: function (callback) {
+        book_instances: function (callback) {
             BookInstance.find({ 'book': req.params.id }, { 'id': 1 }).exec(callback)
         },
     }, function (err, results) {
@@ -78,13 +78,13 @@ exports.book_delete = function (req, res, next) {
         if (!results.book) {
             return next(errorHandler(`Book ${req.params.id} not found`, 404));
         }
-        if (results.bookinstances.length > 0) {
+        if (results.book_instances.length > 0) {
             // Book has bookinstances. Render in same way as for GET route.
             return next(
                 errorHandler(
                     `Book ${req.params.id} cannot be deleted because it has books instances associated`,
                     409,
-                    { bookinstances: results.bookinstances }
+                    { book_instances: results.book_instances }
                 )
             );
         }
