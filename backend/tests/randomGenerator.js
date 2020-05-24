@@ -15,3 +15,7 @@ exports.changeId = (id) => {
     return id.slice(0, id.length - 1) + possible.charAt(Math.floor(Math.random() * possible.length));
 
 }
+
+exports.randomDate = (start = new Date(2020, 0, 1), end = new Date()) => {
+    return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+}
