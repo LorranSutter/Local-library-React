@@ -54,3 +54,12 @@ exports.generateBook = (authorId, genreIds) => {
         genre: genreIds
     }
 }
+
+exports.generateBookInstance = (bookId) => {
+    return {
+        book: bookId,
+        imprint: this.randomString(15),
+        status: 'Available',
+        due_back: new Date(),
+    }
+}
