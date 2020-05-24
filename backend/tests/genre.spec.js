@@ -18,19 +18,13 @@ describe('Genre', () => {
             useFindAndModify: false
         });
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
-        mongoose.connection.dropDatabase();
+        await mongoose.connection.dropDatabase();
     });
 
     afterAll(async () => {
+        await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
     });
-
-    afterEach(async () => {
-        const genreCollection = await mongoose.connection.db.listCollections({ name: 'genres' }).toArray();
-        if (genreCollection.length !== 0) {
-            await mongoose.connection.db.dropCollection('genres');
-        }
-    })
 
     it('Creates a new genre', done => {
         const newGenre = randomGenerator.generateGenre();
@@ -86,9 +80,9 @@ describe('Genre', () => {
         const newGenre2 = new Genre(randomGenerator.generateGenre());
         const newGenre3 = new Genre(randomGenerator.generateGenre());
 
-        await newGenre1.save();
-        await newGenre2.save();
-        await newGenre3.save();
+        const resCreate1 = await newGenre1.save();
+        const resCreate2 = await newGenre2.save();
+        const resCreate3 = await newGenre3.save();
 
         request
             .get('/catalog/genres')
@@ -97,7 +91,23 @@ describe('Genre', () => {
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.genre_list.length).toBe(3);
+                expect(res.body.genre_list.length).toBeGreaterThanOrEqual(3);
+
+                expect(res.body.genre_list).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: resCreate1.id
+                        }),
+                        expect.objectContaining({
+                            _id: resCreate2.id
+                        }),
+                        expect.objectContaining({
+                            _id: resCreate3.id
+                        })
+                    ])
+                );
+
+
 
                 done();
             });
@@ -242,4 +252,5 @@ describe('Genre', () => {
     });
 
     //TODO Cannot delete genre because there are associated books
+    //TODO Genre detail with books
 });

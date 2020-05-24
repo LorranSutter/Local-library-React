@@ -18,18 +18,12 @@ describe('Author', () => {
             useFindAndModify: false
         });
         mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
-        mongoose.connection.dropDatabase();
+        await mongoose.connection.dropDatabase();
     });
 
     afterAll(async () => {
+        await mongoose.connection.dropDatabase();
         await mongoose.connection.close();
-    });
-
-    afterEach(async () => {
-        const authorCollection = await mongoose.connection.db.listCollections({ name: 'authors' }).toArray();
-        if (authorCollection.length !== 0) {
-            await mongoose.connection.db.dropCollection('authors');
-        }
     });
 
     it('Creates a new author', done => {
@@ -89,9 +83,9 @@ describe('Author', () => {
         const newAuthor2 = new Author(randomGenerator.generateAuthor());
         const newAuthor3 = new Author(randomGenerator.generateAuthor());
 
-        await newAuthor1.save();
-        await newAuthor2.save();
-        await newAuthor3.save();
+        const resCreate1 = await newAuthor1.save();
+        const resCreate2 = await newAuthor2.save();
+        const resCreate3 = await newAuthor3.save();
 
         request
             .get('/catalog/authors')
@@ -100,7 +94,21 @@ describe('Author', () => {
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.author_list.length).toBe(3);
+                expect(res.body.author_list.length).toBeGreaterThanOrEqual(3);
+
+                expect(res.body.author_list).toEqual(
+                    expect.arrayContaining([
+                        expect.objectContaining({
+                            _id: resCreate1.id
+                        }),
+                        expect.objectContaining({
+                            _id: resCreate2.id
+                        }),
+                        expect.objectContaining({
+                            _id: resCreate3.id
+                        })
+                    ])
+                );
 
                 done();
             });
@@ -272,4 +280,5 @@ describe('Author', () => {
 
 
     //TODO Cannot delete author because there are associated books
+    //TODO Author detail with books
 });
