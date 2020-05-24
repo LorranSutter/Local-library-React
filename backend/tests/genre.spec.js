@@ -1,5 +1,5 @@
 const app = require('../app');
-const { changeId, randomString } = require('./randomGenerator');
+const randomGenerator = require('./randomGenerator');
 const Genre = require('../models/genre');
 
 const supertest = require('supertest')
@@ -33,7 +33,7 @@ describe('Genre', () => {
     })
 
     it('Creates a new genre', done => {
-        const newGenre = { "name": randomString(10) };
+        const newGenre = { "name": randomGenerator.randomString(10) };
 
         request
             .post('/catalog/genre/create')
@@ -50,7 +50,7 @@ describe('Genre', () => {
     });
 
     it('Cannot create an existing genre', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         await newGenre.save();
 
@@ -82,9 +82,9 @@ describe('Genre', () => {
     });
 
     it('Gets genre list', async done => {
-        const newGenre1 = new Genre({ "name": randomString(10) });
-        const newGenre2 = new Genre({ "name": randomString(10) });
-        const newGenre3 = new Genre({ "name": randomString(10) });
+        const newGenre1 = new Genre({ "name": randomGenerator.randomString(10) });
+        const newGenre2 = new Genre({ "name": randomGenerator.randomString(10) });
+        const newGenre3 = new Genre({ "name": randomGenerator.randomString(10) });
 
         await newGenre1.save();
         await newGenre2.save();
@@ -104,7 +104,7 @@ describe('Genre', () => {
     });
 
     it('Gets genre detail', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre.save();
 
@@ -123,11 +123,11 @@ describe('Genre', () => {
     });
 
     it('Genre not found in detail', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre.save();
 
-        const newGenreId = changeId(resCreate.id);
+        const newGenreId = randomGenerator.changeId(resCreate.id);
 
         request
             .get(`/catalog/genre/${newGenreId}`)
@@ -144,7 +144,7 @@ describe('Genre', () => {
     });
 
     it('Deletes a genre', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre.save();
 
@@ -162,11 +162,11 @@ describe('Genre', () => {
     });
 
     it('Genre not found in delete', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre.save();
 
-        const newGenreId = changeId(resCreate.id);
+        const newGenreId = randomGenerator.changeId(resCreate.id);
 
         request
             .delete(`/catalog/genre/${newGenreId}`)
@@ -183,8 +183,8 @@ describe('Genre', () => {
     });
 
     it('Updates genre', async done => {
-        const newGenre1 = new Genre({ "name": randomString(10) });
-        const newGenre2 = new Genre({ "name": randomString(10) });
+        const newGenre1 = new Genre({ "name": randomGenerator.randomString(10) });
+        const newGenre2 = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre1.save();
 
@@ -203,11 +203,11 @@ describe('Genre', () => {
     });
 
     it('Genre not found in update', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre.save();
 
-        const newGenreId = changeId(resCreate.id);
+        const newGenreId = randomGenerator.changeId(resCreate.id);
 
         request
             .put(`/catalog/genre/${newGenreId}`)
@@ -225,7 +225,7 @@ describe('Genre', () => {
     });
 
     it('Cannot update genre, because name is missing', async done => {
-        const newGenre = new Genre({ "name": randomString(10) });
+        const newGenre = new Genre({ "name": randomGenerator.randomString(10) });
 
         const resCreate = await newGenre.save();
 

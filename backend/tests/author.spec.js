@@ -1,23 +1,13 @@
 const app = require('../app');
-const { changeId, randomString, randomDate } = require('./randomGenerator');
+const randomGenerator = require('./randomGenerator');
 const Author = require('../models/author');
 
 const supertest = require('supertest')
 const request = supertest(app);
-const moment = require('moment');
 
 const mongoose = require('mongoose');
 
 const MONGOURI = "mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library_test?retryWrites=true&w=majority";
-
-const generateAuthor = () => {
-    return {
-        first_name: randomString(10),
-        family_name: randomString(15),
-        date_of_birth: moment(randomDate(new Date(1950, 0, 1), new Date(1960, 0, 1))).format("YYYY-MM-DD"),
-        date_of_death: moment(randomDate()).format("YYYY-MM-DD")
-    }
-}
 
 describe('Author', () => {
 
@@ -43,7 +33,7 @@ describe('Author', () => {
     });
 
     it('Creates a new author', done => {
-        const newAuthor = generateAuthor();
+        const newAuthor = randomGenerator.generateAuthor();
 
         request
             .post('/catalog/author/create')
@@ -76,7 +66,7 @@ describe('Author', () => {
     });
 
     it('Cannot create author, because dates are invalid', async done => {
-        const newAuthor = generateAuthor();
+        const newAuthor = randomGenerator.generateAuthor();
         newAuthor.date_of_birth = "123";
         newAuthor.date_of_death = "123";
 
@@ -95,9 +85,9 @@ describe('Author', () => {
     });
 
     it('Gets author list', async done => {
-        const newAuthor1 = new Author(generateAuthor());
-        const newAuthor2 = new Author(generateAuthor());
-        const newAuthor3 = new Author(generateAuthor());
+        const newAuthor1 = new Author(randomGenerator.generateAuthor());
+        const newAuthor2 = new Author(randomGenerator.generateAuthor());
+        const newAuthor3 = new Author(randomGenerator.generateAuthor());
 
         await newAuthor1.save();
         await newAuthor2.save();
@@ -117,7 +107,7 @@ describe('Author', () => {
     });
 
     it('Gets author detail', async done => {
-        const newAuthor = new Author(generateAuthor());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor.save();
 
@@ -137,11 +127,11 @@ describe('Author', () => {
     });
 
     it('Author not found in detail', async done => {
-        const newAuthor = new Author(generateAuthor());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor.save();
 
-        const newAuthorId = changeId(resCreate.id);
+        const newAuthorId = randomGenerator.changeId(resCreate.id);
 
         request
             .get(`/catalog/author/${newAuthorId}`)
@@ -158,7 +148,7 @@ describe('Author', () => {
     });
 
     it('Deletes a author', async done => {
-        const newAuthor = new Author(generateAuthor());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor.save();
 
@@ -176,11 +166,11 @@ describe('Author', () => {
     });
 
     it('Author not found in delete', async done => {
-        const newAuthor = new Author(generateAuthor());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor.save();
 
-        const newAuthorId = changeId(resCreate.id);
+        const newAuthorId = randomGenerator.changeId(resCreate.id);
 
         request
             .delete(`/catalog/author/${newAuthorId}`)
@@ -197,8 +187,8 @@ describe('Author', () => {
     });
 
     it('Updates author', async done => {
-        const newAuthor1 = new Author(generateAuthor());
-        const newAuthor2 = new Author(generateAuthor());
+        const newAuthor1 = new Author(randomGenerator.generateAuthor());
+        const newAuthor2 = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor1.save();
 
@@ -217,11 +207,11 @@ describe('Author', () => {
     });
 
     it('Author not found in update', async done => {
-        const newAuthor = new Author(generateAuthor());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor.save();
 
-        const newAuthorId = changeId(resCreate.id);
+        const newAuthorId = randomGenerator.changeId(resCreate.id);
 
         request
             .put(`/catalog/author/${newAuthorId}`)
@@ -239,7 +229,7 @@ describe('Author', () => {
     });
 
     it('Cannot update author, because first name and family name are missing', async done => {
-        const newAuthor = new Author(generateAuthor());
+        const newAuthor = new Author(randomGenerator.generateAuthor());
 
         const resCreate = await newAuthor.save();
 
@@ -259,8 +249,8 @@ describe('Author', () => {
     });
 
     it('Cannot update author, because dates are invalid', async done => {
-        const newAuthor1 = new Author(generateAuthor());
-        const newAuthor2 = generateAuthor();
+        const newAuthor1 = new Author(randomGenerator.generateAuthor());
+        const newAuthor2 = randomGenerator.generateAuthor();
         newAuthor2.date_of_birth = "123";
         newAuthor2.date_of_death = "123";
 
