@@ -1,35 +1,9 @@
 const async = require('async');
 
 const Book = require('../models/book');
-const Author = require('../models/author');
-const Genre = require('../models/genre');
 const BookInstance = require('../models/bookinstance');
 
 const { errorHandler } = require('../errorHandler');
-
-exports.index = function (req, res, next) {
-
-    async.parallel({
-        book_count: function (callback) {
-            Book.countDocuments({}, callback);
-        },
-        book_instance_count: function (callback) {
-            BookInstance.countDocuments({}, callback);
-        },
-        book_instance_available_count: function (callback) {
-            BookInstance.countDocuments({ status: 'Available' }, callback);
-        },
-        author_count: function (callback) {
-            Author.countDocuments({}, callback);
-        },
-        genre_count: function (callback) {
-            Genre.countDocuments({}, callback);
-        }
-    }, function renderCB(err, results) {
-        if (err) { return next(err); }
-        res.json({ data: results });
-    });
-};
 
 // Display list of all Books.
 exports.book_list = function (req, res, next) {
@@ -73,7 +47,7 @@ exports.book_detail = function (req, res, next) {
 exports.book_create = (req, res, next) => {
 
     // Create a Book object with escaped and trimmed data.
-    var book = new Book(
+    const book = new Book(
         {
             title: req.body.title,
             author: req.body.author,
@@ -82,10 +56,9 @@ exports.book_create = (req, res, next) => {
             genre: convertGenreToArray(req)
         });
 
-    // DataD is valid. Save book.
+    // Data is valid. Save book.
     book.save(function (err, doc) {
         if (err) { return next(err); }
-        // res.redirect(book.url);
         res.status(201).json({ id: doc.id, message: `Book ${doc.title} created successfully` });
     });
 }
@@ -97,7 +70,7 @@ exports.book_delete = function (req, res, next) {
         book: function (callback) {
             Book.findById(req.params.id).exec(callback)
         },
-        bookinstances: function (callback) {
+        book_instances: function (callback) {
             BookInstance.find({ 'book': req.params.id }, { 'id': 1 }).exec(callback)
         },
     }, function (err, results) {
@@ -105,13 +78,13 @@ exports.book_delete = function (req, res, next) {
         if (!results.book) {
             return next(errorHandler(`Book ${req.params.id} not found`, 404));
         }
-        if (results.bookinstances.length > 0) {
+        if (results.book_instances.length > 0) {
             // Book has bookinstances. Render in same way as for GET route.
             return next(
                 errorHandler(
                     `Book ${req.params.id} cannot be deleted because it has books instances associated`,
                     409,
-                    { bookinstances: results.bookinstances }
+                    { book_instances: results.book_instances }
                 )
             );
         }
@@ -128,7 +101,7 @@ exports.book_delete = function (req, res, next) {
 exports.book_update = (req, res, next) => {
 
     // Create a Book object with escaped/trimmed data and old id.
-    var book = new Book(
+    const book = new Book(
         {
             title: req.body.title,
             author: req.body.author,
@@ -155,4 +128,5 @@ function convertGenreToArray(req) {
         else
             return new Array(req.body.genre);
     }
+    return req.body.genre;
 }

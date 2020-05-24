@@ -1,7 +1,5 @@
 const async = require('async');
-const validator = require('express-validator');
 
-const Book = require('../models/book');
 const BookInstance = require('../models/bookinstance');
 
 const { errorHandler } = require('../errorHandler');
@@ -35,7 +33,7 @@ exports.bookinstance_detail = function (req, res, next) {
 exports.bookinstance_create = (req, res, next) => {
 
     // Create a BookInstance object with escaped and trimmed data.
-    var bookinstance = new BookInstance(
+    const bookinstance = new BookInstance(
         {
             book: req.body.book,
             imprint: req.body.imprint,
@@ -74,7 +72,7 @@ exports.bookinstance_delete = function (req, res, next) {
 exports.bookinstance_update = (req, res, next) => {
 
     // Create a book instance object with escaped and trimmed data.
-    var bookinstance = new BookInstance(
+    const bookinstance = new BookInstance(
         {
             _id: req.params.id, //This is required, or a new ID will be assigned!
             book: req.body.book,
