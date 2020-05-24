@@ -125,6 +125,7 @@ describe('Genre', () => {
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
+                expect(res.body.genre._id).toBe(resCreate.id);
                 expect(res.body.genre.name).toBe(newGenre.name);
                 expect(res.body.genre_books).toStrictEqual([]);
 

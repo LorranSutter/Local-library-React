@@ -6,7 +6,6 @@ const Genre = require('../models/genre');
 
 const supertest = require('supertest')
 const request = supertest(app);
-const moment = require('moment');
 
 const mongoose = require('mongoose');
 
@@ -127,6 +126,7 @@ describe('Book', () => {
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
+                expect(res.body.book._id).toBe(resCreate.id);
                 expect(res.body.book.title).toBe(newBook.title);
                 expect(res.body.book.author._id).toBe(savedAuthor.id);
                 expect(res.body.book.summary).toBe(newBook.summary);

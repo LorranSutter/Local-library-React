@@ -126,6 +126,7 @@ describe('Author', () => {
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
+                expect(res.body.author._id).toBe(resCreate.id);
                 expect(res.body.author.first_name).toBe(newAuthor.first_name);
                 expect(res.body.author.family_name).toBe(newAuthor.family_name);
                 expect(res.body.author_books).toStrictEqual([]);
