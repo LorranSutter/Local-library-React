@@ -1,5 +1,6 @@
 const app = require('../app');
 const { changeId, randomString } = require('./randomGenerator');
+const Genre = require('../models/genre');
 
 const supertest = require('supertest')
 const request = supertest(app);
@@ -49,9 +50,9 @@ describe('Genre', () => {
     });
 
     it('Cannot create an existing genre', async done => {
-        const newGenre = { "name": randomString(10) };
+        const newGenre = new Genre({ "name": randomString(10) });
 
-        await request.post('/catalog/genre/create').send(newGenre);
+        await newGenre.save();
 
         request
             .post('/catalog/genre/create')
@@ -81,13 +82,13 @@ describe('Genre', () => {
     });
 
     it('Gets genre list', async done => {
-        const newGenre1 = { "name": randomString(10) };
-        const newGenre2 = { "name": randomString(10) };
-        const newGenre3 = { "name": randomString(10) };
+        const newGenre1 = new Genre({ "name": randomString(10) });
+        const newGenre2 = new Genre({ "name": randomString(10) });
+        const newGenre3 = new Genre({ "name": randomString(10) });
 
-        await request.post('/catalog/genre/create').send(newGenre1);
-        await request.post('/catalog/genre/create').send(newGenre2);
-        await request.post('/catalog/genre/create').send(newGenre3);
+        await newGenre1.save();
+        await newGenre2.save();
+        await newGenre3.save();
 
         request
             .get('/catalog/genres')
@@ -103,12 +104,12 @@ describe('Genre', () => {
     });
 
     it('Gets genre detail', async done => {
-        const newGenre = { "name": randomString(10) };
+        const newGenre = new Genre({ "name": randomString(10) });
 
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+        const resCreate = await newGenre.save();
 
         request
-            .get(`/catalog/genre/${resCreate.body.id}`)
+            .get(`/catalog/genre/${resCreate.id}`)
             .end(function (err, res) {
 
                 if (err) return done(err);
@@ -122,10 +123,11 @@ describe('Genre', () => {
     });
 
     it('Genre not found in detail', async done => {
-        const newGenre = { "name": randomString(10) };
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+        const newGenre = new Genre({ "name": randomString(10) });
 
-        const newGenreId = changeId(resCreate.body.id);
+        const resCreate = await newGenre.save();
+
+        const newGenreId = changeId(resCreate.id);
 
         request
             .get(`/catalog/genre/${newGenreId}`)
@@ -142,28 +144,29 @@ describe('Genre', () => {
     });
 
     it('Deletes a genre', async done => {
-        const newGenre = { "name": randomString(10) };
+        const newGenre = new Genre({ "name": randomString(10) });
 
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+        const resCreate = await newGenre.save();
 
         request
-            .delete(`/catalog/genre/${resCreate.body.id}`)
+            .delete(`/catalog/genre/${resCreate.id}`)
             .end(function (err, res) {
 
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.message).toBe(`Genre ${resCreate.body.id} deleted successfully`)
+                expect(res.body.message).toBe(`Genre ${resCreate.id} deleted successfully`)
 
                 done();
             });
     });
 
     it('Genre not found in delete', async done => {
-        const newGenre = { "name": randomString(10) };
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+        const newGenre = new Genre({ "name": randomString(10) });
 
-        const newGenreId = changeId(resCreate.body.id);
+        const resCreate = await newGenre.save();
+
+        const newGenreId = changeId(resCreate.id);
 
         request
             .delete(`/catalog/genre/${newGenreId}`)
@@ -180,30 +183,31 @@ describe('Genre', () => {
     });
 
     it('Updates genre', async done => {
-        const newGenre1 = { "name": randomString(10) };
-        const newGenre2 = { "name": randomString(10) };
+        const newGenre1 = new Genre({ "name": randomString(10) });
+        const newGenre2 = new Genre({ "name": randomString(10) });
 
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre1);
+        const resCreate = await newGenre1.save();
 
         request
-            .put(`/catalog/genre/${resCreate.body.id}`)
+            .put(`/catalog/genre/${resCreate.id}`)
             .send(newGenre2)
             .end(function (err, res) {
 
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.message).toBe(`Genre ${resCreate.body.id} updated successfully`)
+                expect(res.body.message).toBe(`Genre ${resCreate.id} updated successfully`)
 
                 done();
             });
     });
 
     it('Genre not found in update', async done => {
-        const newGenre = { "name": randomString(10) };
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+        const newGenre = new Genre({ "name": randomString(10) });
 
-        const newGenreId = changeId(resCreate.body.id);
+        const resCreate = await newGenre.save();
+
+        const newGenreId = changeId(resCreate.id);
 
         request
             .put(`/catalog/genre/${newGenreId}`)
@@ -221,11 +225,12 @@ describe('Genre', () => {
     });
 
     it('Cannot update genre, because name is missing', async done => {
-        const newGenre = { "name": randomString(10) };
-        const resCreate = await request.post('/catalog/genre/create').send(newGenre);
+        const newGenre = new Genre({ "name": randomString(10) });
+
+        const resCreate = await newGenre.save();
 
         request
-            .put(`/catalog/genre/${resCreate.body.id}`)
+            .put(`/catalog/genre/${resCreate.id}`)
             .end(function (err, res) {
                 if (err) return done(err);
 

@@ -1,5 +1,6 @@
 const app = require('../app');
 const { changeId, randomString, randomDate } = require('./randomGenerator');
+const Author = require('../models/author');
 
 const supertest = require('supertest')
 const request = supertest(app);
@@ -94,13 +95,13 @@ describe('Author', () => {
     });
 
     it('Gets author list', async done => {
-        const newAuthor1 = generateAuthor();
-        const newAuthor2 = { ...newAuthor1 }
-        const newAuthor3 = { ...newAuthor1 }
+        const newAuthor1 = new Author(generateAuthor());
+        const newAuthor2 = new Author(generateAuthor());
+        const newAuthor3 = new Author(generateAuthor());
 
-        await request.post('/catalog/author/create').send(newAuthor1);
-        await request.post('/catalog/author/create').send(newAuthor2);
-        await request.post('/catalog/author/create').send(newAuthor3);
+        await newAuthor1.save();
+        await newAuthor2.save();
+        await newAuthor3.save();
 
         request
             .get('/catalog/authors')
@@ -116,12 +117,12 @@ describe('Author', () => {
     });
 
     it('Gets author detail', async done => {
-        const newAuthor = generateAuthor();
+        const newAuthor = new Author(generateAuthor());
 
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor);
+        const resCreate = await newAuthor.save();
 
         request
-            .get(`/catalog/author/${resCreate.body.id}`)
+            .get(`/catalog/author/${resCreate.id}`)
             .end(function (err, res) {
 
                 if (err) return done(err);
@@ -136,10 +137,11 @@ describe('Author', () => {
     });
 
     it('Author not found in detail', async done => {
-        const newAuthor = generateAuthor();
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor);
+        const newAuthor = new Author(generateAuthor());
 
-        const newAuthorId = changeId(resCreate.body.id);
+        const resCreate = await newAuthor.save();
+
+        const newAuthorId = changeId(resCreate.id);
 
         request
             .get(`/catalog/author/${newAuthorId}`)
@@ -156,28 +158,29 @@ describe('Author', () => {
     });
 
     it('Deletes a author', async done => {
-        const newAuthor = generateAuthor();
+        const newAuthor = new Author(generateAuthor());
 
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor);
+        const resCreate = await newAuthor.save();
 
         request
-            .delete(`/catalog/author/${resCreate.body.id}`)
+            .delete(`/catalog/author/${resCreate.id}`)
             .end(function (err, res) {
 
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.message).toBe(`Author ${resCreate.body.id} deleted successfully`)
+                expect(res.body.message).toBe(`Author ${resCreate.id} deleted successfully`)
 
                 done();
             });
     });
 
     it('Author not found in delete', async done => {
-        const newAuthor = generateAuthor();
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor);
+        const newAuthor = new Author(generateAuthor());
 
-        const newAuthorId = changeId(resCreate.body.id);
+        const resCreate = await newAuthor.save();
+
+        const newAuthorId = changeId(resCreate.id);
 
         request
             .delete(`/catalog/author/${newAuthorId}`)
@@ -194,30 +197,31 @@ describe('Author', () => {
     });
 
     it('Updates author', async done => {
-        const newAuthor1 = generateAuthor();
-        const newAuthor2 = generateAuthor();
+        const newAuthor1 = new Author(generateAuthor());
+        const newAuthor2 = new Author(generateAuthor());
 
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor1);
+        const resCreate = await newAuthor1.save();
 
         request
-            .put(`/catalog/author/${resCreate.body.id}`)
+            .put(`/catalog/author/${resCreate.id}`)
             .send(newAuthor2)
             .end(function (err, res) {
 
                 if (err) return done(err);
 
                 expect(res.status).toBe(200);
-                expect(res.body.message).toBe(`Author ${resCreate.body.id} updated successfully`)
+                expect(res.body.message).toBe(`Author ${resCreate.id} updated successfully`)
 
                 done();
             });
     });
 
     it('Author not found in update', async done => {
-        const newAuthor = generateAuthor();
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor);
+        const newAuthor = new Author(generateAuthor());
 
-        const newAuthorId = changeId(resCreate.body.id);
+        const resCreate = await newAuthor.save();
+
+        const newAuthorId = changeId(resCreate.id);
 
         request
             .put(`/catalog/author/${newAuthorId}`)
@@ -235,11 +239,12 @@ describe('Author', () => {
     });
 
     it('Cannot update author, because first name and family name are missing', async done => {
-        const newAuthor = generateAuthor();
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor);
+        const newAuthor = new Author(generateAuthor());
+
+        const resCreate = await newAuthor.save();
 
         request
-            .put(`/catalog/author/${resCreate.body.id}`)
+            .put(`/catalog/author/${resCreate.id}`)
             .end(function (err, res) {
                 if (err) return done(err);
 
@@ -254,15 +259,15 @@ describe('Author', () => {
     });
 
     it('Cannot update author, because dates are invalid', async done => {
-        const newAuthor1 = generateAuthor();
-        const newAuthor2 = { ...newAuthor1 };
+        const newAuthor1 = new Author(generateAuthor());
+        const newAuthor2 = generateAuthor();
         newAuthor2.date_of_birth = "123";
         newAuthor2.date_of_death = "123";
 
-        const resCreate = await request.post('/catalog/author/create').send(newAuthor1);
+        const resCreate = await newAuthor1.save();
 
         request
-            .put(`/catalog/author/${resCreate.body.id}`)
+            .put(`/catalog/author/${resCreate.id}`)
             .send(newAuthor2)
             .end(function (err, res) {
                 if (err) return done(err);
