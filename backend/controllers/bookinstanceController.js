@@ -1,7 +1,5 @@
 const async = require('async');
-const validator = require('express-validator');
 
-const Book = require('../models/book');
 const BookInstance = require('../models/bookinstance');
 
 const { errorHandler } = require('../errorHandler');
