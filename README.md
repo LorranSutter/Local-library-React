@@ -4,6 +4,20 @@ This project is an extension of a previous version of a tutorial from [Developer
 
 This application was developed using React as frontend, but also you can check this application implemented using Pug template [here](https://github.com/LorranSutter/Local-library).
 
+## :straight_ruler: Development pipeline and challenges
+
+***Development still in progress***. Follow some steps already done:
+
+1. As mentioned above, this project is an extension of a previous version. I have decided to extend this version so as to I could learn more about [ReactJS](https://reactjs.org/). For such, I should start turning my Pug template into a API.
+
+2. Initially, I started this project to learn more about ReactJS. However, I realized that it was the opportunity to improve another skill: **testing**.
+
+3. Before moving to frontend development with React, I set out to build test cases to my API. I chose to use [Jest](https://jestjs.io/) as my testing framework, due to its simplicity and because I had already have some contact with this tool.
+
+    In the meanwhile, I got confused with integrating properly my API with Jest using mongo as database. I found this blog [Endpoint testing](https://zellwk.com/blog/endpoint-testing/) as a valuable source to help me on this path.
+
+4. Next step: ReactJS frontend finally. Or should I say "TDD with React"?
+
 <!-- ## :runner: How to run
 
 Open your terminal in the folder you want to clone the project
