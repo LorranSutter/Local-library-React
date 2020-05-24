@@ -41,7 +41,7 @@ exports.author_detail = function (req, res, next) {
 exports.author_create = (req, res, next) => {
 
     // Create an Author object with escaped and trimmed data.
-    var author = new Author(
+    const author = new Author(
         {
             first_name: req.body.first_name,
             family_name: req.body.family_name,
@@ -92,7 +92,7 @@ exports.author_delete = function (req, res, next) {
 exports.author_update = (req, res, next) => {
 
     // Create a author object with escaped and trimmed data.
-    var author = new Author(
+    const author = new Author(
         {
             _id: req.params.id, //This is required, or a new ID will be assigned!
             first_name: req.body.first_name,

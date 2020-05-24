@@ -44,7 +44,7 @@ exports.genre_detail = function (req, res, next) {
 exports.genre_create = (req, res, next) => {
 
     // Create a genre object with escaped and trimmed data.
-    var genre = new Genre(
+    const genre = new Genre(
         { name: req.body.name }
     );
 
@@ -103,7 +103,7 @@ exports.genre_delete = function (req, res, next) {
 exports.genre_update = (req, res, next) => {
 
     // Create a genre object with escaped and trimmed data.
-    var genre = new Genre(
+    const genre = new Genre(
         {
             _id: req.params.id, //This is required, or a new ID will be assigned!
             name: req.body.name
