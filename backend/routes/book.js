@@ -13,7 +13,7 @@ router.post('/book/create', book_validator.validator, validate, book_controller.
 router.delete('/book/:id', book_controller.book_delete);
 
 // PUT request to update Book.
-router.put('/book/:id', book_controller.book_update);
+router.put('/book/:id', book_validator.validator, validate, book_controller.book_update);
 
 // GET request for one Book.
 router.get('/book/:id', book_controller.book_detail);
