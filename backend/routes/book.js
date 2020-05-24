@@ -6,9 +6,6 @@ const book_controller = require('../controllers/bookController');
 const book_validator = require('../middlewares/bookValidator');
 const { validate } = require('../middlewares/validate');
 
-// GET catalog home page.
-router.get('/', book_controller.index);
-
 // POST request for creating Book.
 router.post('/book/create', book_validator.validator, validate, book_controller.book_create);
 
@@ -16,7 +13,7 @@ router.post('/book/create', book_validator.validator, validate, book_controller.
 router.delete('/book/:id', book_controller.book_delete);
 
 // PUT request to update Book.
-router.put('/book/:id', book_controller.book_update);
+router.put('/book/:id', book_validator.validator, validate, book_controller.book_update);
 
 // GET request for one Book.
 router.get('/book/:id', book_controller.book_detail);

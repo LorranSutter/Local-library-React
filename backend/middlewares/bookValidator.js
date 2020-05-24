@@ -18,7 +18,7 @@ exports.validator = [
         .isLength({ min: 1 })
         .escape(),
     validator
-        .body('isbn', 'ISBN must not be empty')
+        .body('isbn', 'ISBN must not be empty.')
         .trim()
         .isLength({ min: 1 })
         .escape()
