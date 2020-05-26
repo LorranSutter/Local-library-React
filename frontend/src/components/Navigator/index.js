@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Navigation } from '@shopify/polaris';
 import { HomeMajorFilled } from '@shopify/polaris-icons';
 
