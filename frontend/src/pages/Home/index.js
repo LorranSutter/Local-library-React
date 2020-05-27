@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Page, Layout, Card, List, Link, Spinner } from '@shopify/polaris';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Page, Layout, Card, List, Link, Spinner, Toast } from '@shopify/polaris';
 
 import api from '../../services/api';
 
@@ -10,6 +10,17 @@ const Home = () => {
     const [copiesAvailable, setCopiesAvailable] = useState();
     const [authors, setAuthors] = useState();
     const [genres, setGenres] = useState();
+    const [activeError, setActiveError] = useState(false);
+
+    const dataSpinner = (data) => {
+        return (<Link url='/catalog/books'>{data ?? <Spinner size='small' color='inkLightest' />}</Link>);
+    }
+
+    const toggleActiveError = useCallback(() => setActiveError((active) => !active), []);
+    const toastError = activeError ? (
+        <Toast content="Error retrieving data" error onDismiss={toggleActiveError} />
+    ) : null;
+
 
     useEffect(() => {
         api
@@ -21,14 +32,13 @@ const Home = () => {
                 setAuthors(res.data.data.author_count);
                 setGenres(res.data.data.genre_count);
             })
-            .catch(err => {
-                console.log(err)
-                // TODO handle api error
+            .catch(() => {
+                toggleActiveError();
             });
-    }, []);
+    }, [toggleActiveError]);
+
     // TODO Better list presentation
     // TODO Better spinner presentation
-
     return (
         <Page title="Local Library">
             <Layout>
@@ -36,24 +46,25 @@ const Home = () => {
                     <Card sectioned title="The library has the following record counts">
                         <List>
                             <List.Item>
-                                Books: <Link url='/catalog/books'>{books ?? <Spinner size='small' color='inkLightest' />}</Link>
+                                Books: {dataSpinner(books)}
                             </List.Item>
                             <List.Item>
-                                Copies: <Link url='/catalog/bookinstances'>{copies ?? <Spinner size='small' color='inkLightest' />}</Link>
+                                Copies: {dataSpinner(copies)}
                             </List.Item>
                             <List.Item>
-                                Available copies: <Link url='/catalog/bookinstances'>{copiesAvailable ?? <Spinner size='small' color='inkLightest' />}</Link>
+                                Available copies: {dataSpinner(copiesAvailable)}
                             </List.Item>
                             <List.Item>
-                                Authors: <Link url='/catalog/authors'>{authors ?? <Spinner size='small' color='inkLightest' />}</Link>
+                                Authors: {dataSpinner(authors)}
                             </List.Item>
                             <List.Item>
-                                Genres: <Link url='/catalog/genres'>{genres ?? <Spinner size='small' color='inkLightest' />}</Link>
+                                Genres: {dataSpinner(genres)}
                             </List.Item>
                         </List>
                     </Card>
                 </Layout.Section>
             </Layout>
+            {toastError}
         </Page>
     );
 }
