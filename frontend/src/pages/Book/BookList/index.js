@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
-import api from '../../services/api';
+import api from '../../../services/api';
 
 const BooksList = () => {
 

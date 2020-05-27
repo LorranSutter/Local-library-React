@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
-import api from '../../services/api';
+import api from '../../../services/api';
 
-const GenreList = () => {
+const AuthorList = () => {
 
-    const [genres, setGenres] = useState([]);
+    const [authors, setAuthors] = useState([]);
 
     useEffect(() => {
         api
-            .get('/catalog/genres')
+            .get('/catalog/authors')
             .then(res => {
-                setGenres(res.data.genre_list);
+                setAuthors(res.data.author_list);
             })
             .catch(err => {
                 console.log(err)
@@ -21,19 +21,20 @@ const GenreList = () => {
     }, []);
 
     return (
-        <Page title="Genre list">
+        <Page title="Author list">
             <Layout>
                 <Layout.Section>
                     <ResourceList
-                        items={genres}
+                        items={authors}
                         renderItem={
                             (item) => {
                                 return (
                                     <ResourceItem
                                         id={item._id}
-                                        url={`/catalog/genre/${item._id}`}
+                                        url={`/catalog/author/${item._id}`}
                                     >
-                                        {item.name}
+                                        {`${item.first_name} ${item.family_name} `}
+                                        {/* {`${item.date_of_birth} ${item.date_of_death}`} */}
                                     </ResourceItem>
                                 )
                             }
@@ -45,4 +46,4 @@ const GenreList = () => {
     );
 }
 
-export default GenreList;
+export default AuthorList;

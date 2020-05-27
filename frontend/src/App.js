@@ -6,10 +6,10 @@ import './App.css';
 
 import Navigator from './components/Navigator';
 import Home from './pages/Home';
-import GenreList from './pages/GenreList';
-import AuthorList from './pages/AuthorList';
-import BookList from './pages/BookList';
-import BookInstanceList from './pages/BookInstanceList';
+import GenreList from './pages/Genre/GenreList';
+import AuthorList from './pages/Author/AuthorList';
+import BookList from './pages/Book/BookList';
+import BookInstanceList from './pages/BookInstance/BookInstanceList';
 
 function App() {
   return (

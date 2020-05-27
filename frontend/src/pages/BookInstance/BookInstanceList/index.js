@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
-import api from '../../services/api';
+import api from '../../../services/api';
 
-const AuthorList = () => {
+const BookInstanceList = () => {
 
-    const [authors, setAuthors] = useState([]);
+    const [bookInstances, setBookInstances] = useState([]);
 
     useEffect(() => {
         api
-            .get('/catalog/authors')
+            .get('/catalog/bookInstances')
             .then(res => {
-                setAuthors(res.data.author_list);
+                setBookInstances(res.data.bookinstance_list);
             })
             .catch(err => {
                 console.log(err)
@@ -21,20 +21,19 @@ const AuthorList = () => {
     }, []);
 
     return (
-        <Page title="Author list">
+        <Page title="Book instance list">
             <Layout>
                 <Layout.Section>
                     <ResourceList
-                        items={authors}
+                        items={bookInstances}
                         renderItem={
                             (item) => {
                                 return (
                                     <ResourceItem
                                         id={item._id}
-                                        url={`/catalog/author/${item._id}`}
+                                        url={`/catalog/bookinstance/${item._id}`}
                                     >
-                                        {`${item.first_name} ${item.family_name} `}
-                                        {/* {`${item.date_of_birth} ${item.date_of_death}`} */}
+                                        {item.book.title}
                                     </ResourceItem>
                                 )
                             }
@@ -46,4 +45,4 @@ const AuthorList = () => {
     );
 }
 
-export default AuthorList;
+export default BookInstanceList;
