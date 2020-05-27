@@ -3,38 +3,39 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const AuthorList = () => {
+const Detail = ({ match }) => {
 
-    const [authors, setAuthors] = useState([]);
+    const [name, setName] = useState('')
+    const [authorBooks, setAuthorBooks] = useState([]);
 
     useEffect(() => {
         api
-            .get('/catalog/authors')
+            .get(`/catalog/author/${match.params.id}`)
             .then(res => {
-                setAuthors(res.data.author_list);
+                setName(`${res.data.author.family_name}, ${res.data.author.first_name}`);
+                setAuthorBooks(res.data.author_books);
             })
             .catch(err => {
                 console.log(err)
                 // TODO handle api error
             });
 
-    }, []);
+    }, [match]);
 
     return (
-        <Page title="Author list">
+        <Page title={`Author: ${name}`}>
             <Layout>
                 <Layout.Section>
                     <ResourceList
-                        items={authors}
+                        items={authorBooks}
                         renderItem={
                             (item) => {
                                 return (
                                     <ResourceItem
                                         id={item._id}
-                                        url={`/catalog/author/${item._id}`}
+                                        url={`/catalog/book/${item._id}`}
                                     >
-                                        {`${item.first_name} ${item.family_name} `}
-                                        {/* {`${item.date_of_birth} ${item.date_of_death}`} */}
+                                        {item.title}
                                     </ResourceItem>
                                 )
                             }
@@ -46,4 +47,4 @@ const AuthorList = () => {
     );
 }
 
-export default AuthorList;
+export default Detail;

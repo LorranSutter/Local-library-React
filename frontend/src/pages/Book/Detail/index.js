@@ -3,7 +3,7 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const BookDetail = ({ match }) => {
+const Detail = ({ match }) => {
 
     const [title, setTitle] = useState('')
     const [bookInstances, setBookInstances] = useState([]);
@@ -47,4 +47,4 @@ const BookDetail = ({ match }) => {
     );
 }
 
-export default BookDetail;
+export default Detail;

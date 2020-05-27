@@ -3,31 +3,29 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const GenreDetail = ({ match }) => {
+const List = () => {
 
-    const [title, setTitle] = useState('')
-    const [genreBooks, setGenreBooks] = useState([]);
+    const [books, setBooks] = useState([]);
 
     useEffect(() => {
         api
-            .get(`/catalog/genre/${match.params.id}`)
+            .get('/catalog/books')
             .then(res => {
-                setTitle(res.data.genre.name);
-                setGenreBooks(res.data.genre_books);
+                setBooks(res.data.book_list);
             })
             .catch(err => {
                 console.log(err)
                 // TODO handle api error
             });
 
-    }, [match]);
+    }, []);
 
     return (
-        <Page title={`Genre: ${title}`}>
+        <Page title="Book list">
             <Layout>
                 <Layout.Section>
                     <ResourceList
-                        items={genreBooks}
+                        items={books}
                         renderItem={
                             (item) => {
                                 return (
@@ -47,4 +45,4 @@ const GenreDetail = ({ match }) => {
     );
 }
 
-export default GenreDetail;
+export default List;

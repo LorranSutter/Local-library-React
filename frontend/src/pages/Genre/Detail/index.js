@@ -3,17 +3,17 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const AuthorDetail = ({ match }) => {
+const Detail = ({ match }) => {
 
-    const [name, setName] = useState('')
-    const [authorBooks, setAuthorBooks] = useState([]);
+    const [title, setTitle] = useState('')
+    const [genreBooks, setGenreBooks] = useState([]);
 
     useEffect(() => {
         api
-            .get(`/catalog/author/${match.params.id}`)
+            .get(`/catalog/genre/${match.params.id}`)
             .then(res => {
-                setName(`${res.data.author.family_name}, ${res.data.author.first_name}`);
-                setAuthorBooks(res.data.author_books);
+                setTitle(res.data.genre.name);
+                setGenreBooks(res.data.genre_books);
             })
             .catch(err => {
                 console.log(err)
@@ -23,11 +23,11 @@ const AuthorDetail = ({ match }) => {
     }, [match]);
 
     return (
-        <Page title={`Author: ${name}`}>
+        <Page title={`Genre: ${title}`}>
             <Layout>
                 <Layout.Section>
                     <ResourceList
-                        items={authorBooks}
+                        items={genreBooks}
                         renderItem={
                             (item) => {
                                 return (
@@ -47,4 +47,4 @@ const AuthorDetail = ({ match }) => {
     );
 }
 
-export default AuthorDetail;
+export default Detail;

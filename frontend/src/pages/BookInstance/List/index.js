@@ -3,7 +3,7 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const BookInstanceList = () => {
+const List = () => {
 
     const [bookInstances, setBookInstances] = useState([]);
 
@@ -45,4 +45,4 @@ const BookInstanceList = () => {
     );
 }
 
-export default BookInstanceList;
+export default List;

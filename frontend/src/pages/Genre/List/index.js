@@ -3,7 +3,7 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const GenreList = () => {
+const List = () => {
 
     const [genres, setGenres] = useState([]);
 
@@ -45,4 +45,4 @@ const GenreList = () => {
     );
 }
 
-export default GenreList;
+export default List;

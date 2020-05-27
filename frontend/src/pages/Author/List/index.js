@@ -3,15 +3,15 @@ import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const BooksList = () => {
+const List = () => {
 
-    const [books, setBooks] = useState([]);
+    const [authors, setAuthors] = useState([]);
 
     useEffect(() => {
         api
-            .get('/catalog/books')
+            .get('/catalog/authors')
             .then(res => {
-                setBooks(res.data.book_list);
+                setAuthors(res.data.author_list);
             })
             .catch(err => {
                 console.log(err)
@@ -21,19 +21,20 @@ const BooksList = () => {
     }, []);
 
     return (
-        <Page title="Book list">
+        <Page title="Author list">
             <Layout>
                 <Layout.Section>
                     <ResourceList
-                        items={books}
+                        items={authors}
                         renderItem={
                             (item) => {
                                 return (
                                     <ResourceItem
                                         id={item._id}
-                                        url={`/catalog/book/${item._id}`}
+                                        url={`/catalog/author/${item._id}`}
                                     >
-                                        {item.title}
+                                        {`${item.first_name} ${item.family_name} `}
+                                        {/* {`${item.date_of_birth} ${item.date_of_death}`} */}
                                     </ResourceItem>
                                 )
                             }
@@ -45,4 +46,4 @@ const BooksList = () => {
     );
 }
 
-export default BooksList;
+export default List;
