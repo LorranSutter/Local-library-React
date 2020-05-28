@@ -26,7 +26,7 @@ exports.genre_detail = function (req, res, next) {
         },
 
         genre_books: function (callback) {
-            Book.find({ 'genre': req.params.id })
+            Book.find({ 'genre': req.params.id }, { 'genre': 0, 'isbn': 0, 'author': 0 })
                 .exec(callback);
         },
 
