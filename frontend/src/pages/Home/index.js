@@ -21,7 +21,6 @@ const Home = () => {
         <Toast content="Error retrieving data" error onDismiss={toggleActiveError} />
     ) : null;
 
-
     useEffect(() => {
         api
             .get('/')

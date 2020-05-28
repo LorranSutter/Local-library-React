@@ -33,7 +33,7 @@ const Detail = ({ match }) => {
                                 return (
                                     <ResourceItem
                                         id={item._id}
-                                        url={`/catalog/bookinstance/${item._id}`}
+                                        url={`/bookinstance/detail/${item._id}`}
                                     >
                                         {item._id}
                                     </ResourceItem>

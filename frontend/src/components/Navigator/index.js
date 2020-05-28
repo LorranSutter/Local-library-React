@@ -19,19 +19,19 @@ const Navigator = (
             items={[
                 {
                     label: 'All authors',
-                    url: '/catalog/authors'
+                    url: '/authors'
                 },
                 {
                     label: 'All genres',
-                    url: '/catalog/genres'
+                    url: '/genres'
                 },
                 {
                     label: 'All books',
-                    url: '/catalog/books'
+                    url: '/books'
                 },
                 {
                     label: 'All book instances',
-                    url: '/catalog/bookinstances'
+                    url: '/bookinstances'
                 }
             ]}
         />
@@ -41,19 +41,19 @@ const Navigator = (
             items={[
                 {
                     label: 'Create a new author',
-                    url: '/catalog/author/create'
+                    url: '/author/create'
                 },
                 {
                     label: 'Create a new genre',
-                    url: '/catalog/genre/create'
+                    url: '/genre/create'
                 },
                 {
                     label: 'Create a new book',
-                    url: '/catalog/book/create'
+                    url: '/book/create'
                 },
                 {
                     label: 'Create a new book instance',
-                    url: '/catalog/bookinstance/create'
+                    url: '/bookinstance/create'
                 }
             ]}
         />

@@ -31,7 +31,7 @@ const List = () => {
                                 return (
                                     <ResourceItem
                                         id={item._id}
-                                        url={`/catalog/author/${item._id}`}
+                                        url={`/author/detail/${item._id}`}
                                     >
                                         {`${item.first_name} ${item.family_name} `}
                                         {/* {`${item.date_of_birth} ${item.date_of_death}`} */}
