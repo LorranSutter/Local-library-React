@@ -14,8 +14,10 @@ import AuthorDetail from './pages/Author/Detail';
 import AuthorCreate from './pages/Author/Create';
 import BookList from './pages/Book/List';
 import BookDetail from './pages/Book/Detail';
+import BookCreate from './pages/Book/Create';
 import BookInstanceList from './pages/BookInstance/List';
 import BookInstanceDetail from './pages/BookInstance/Detail';
+import BookInstanceCreate from './pages/BookInstance/Create';
 
 function App() {
   return (
@@ -32,8 +34,10 @@ function App() {
           <Route path='/author/create' exact component={AuthorCreate} />
           <Route path='/books' exact component={BookList} />
           <Route path='/book/detail/:id' exact component={BookDetail} />
+          <Route path='/book/create' exact component={BookCreate} />
           <Route path='/bookinstances' exact component={BookInstanceList} />
           <Route path='/bookinstance/detail/:id' exact component={BookInstanceDetail} />
+          <Route path='/bookinstance/create' exact component={BookInstanceCreate} />
         </Switch>
       </Frame>
     </BrowserRouter>
