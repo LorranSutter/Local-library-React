@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
+import { Page, Layout, ResourceList, ResourceItem, TextStyle } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
@@ -35,7 +35,12 @@ const Detail = ({ match }) => {
                                         id={item._id}
                                         url={`/book/detail/${item._id}`}
                                     >
-                                        {item.title}
+                                        <h3>
+                                            <TextStyle variation="strong">{item.title}</TextStyle>
+                                        </h3>
+                                        <p>
+                                            {item.summary}
+                                        </p>
                                     </ResourceItem>
                                 )
                             }
