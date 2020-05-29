@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Page, Layout, Form, FormLayout, TextField, Select, Button } from '@shopify/polaris';
+import { Page, Layout, Form, FormLayout, TextField, Select, Button, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
@@ -10,6 +10,13 @@ const Create = () => {
     const [imprint, setImprint] = useState('');
     const [date, setDate] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('Maintenance');
+    const [isLoading, setIsLoading] = useState(false);
+    const [saved, setSaved] = useState(false);
+
+    const toggleSaved = useCallback(() => setSaved((saved) => !saved), []);
+    const toastSaved = saved ? (
+        <Toast content={`Book Instance saved successfully`} onDismiss={toggleSaved} />
+    ) : null;
 
     const handleSelectBookChange = useCallback((value) => setSelectedBook(value), []);
     const handleSelectStatusChange = useCallback((value) => setSelectedStatus(value), []);
@@ -32,12 +39,7 @@ const Create = () => {
 
     const handleSubmit = useCallback(
         () => {
-            console.log({
-                book: selectedBook,
-                imprint: imprint,
-                status: selectedStatus,
-                due_back: date
-            })
+            setIsLoading(isLoading => !isLoading);
             try {
                 api
                     .post('/catalog/bookinstance/create',
@@ -49,16 +51,23 @@ const Create = () => {
                         })
                     .then(res => {
                         console.log(res);
+                        toggleSaved();
+                        setImprint('');
+                        setDate('');
+                        setSelectedStatus('Maintenance');
                     })
                     .catch(err => {
                         console.log(err);
+                    })
+                    .finally(() => {
+                        setIsLoading(isLoading => !isLoading);
                     });
 
             } catch (error) {
                 console.log(error);
             }
         },
-        [selectedBook, imprint, selectedStatus, date]
+        [selectedBook, imprint, selectedStatus, date, toggleSaved]
     );
 
     useEffect(() => {
@@ -122,9 +131,12 @@ const Create = () => {
                                 onChange={handleSelectStatusChange}
                                 value={selectedStatus}
                             />
-                            <Button primary submit>
-                                Save
-                            </Button>
+                            {isLoading ?
+                                <Button primary submit loading> Save </Button>
+                                :
+                                <Button primary submit> Save </Button>
+                            }
+                            {toastSaved}
                         </FormLayout>
                     </Form>
                 </Layout.Section>

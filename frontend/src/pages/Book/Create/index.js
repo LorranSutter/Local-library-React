@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Page, Layout, Form, FormLayout, TextField, Select, Button } from '@shopify/polaris';
+import { Page, Layout, Form, FormLayout, TextField, Select, Button, Toast } from '@shopify/polaris';
 import axios from 'axios';
 
 import api from '../../../services/api';
@@ -13,6 +13,13 @@ const Create = () => {
     const [isbn, setISBN] = useState('');
     const [genres, setGenres] = useState([]);
     const [selectedGenre, setSelectedGenre] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [saved, setSaved] = useState(false);
+
+    const toggleSaved = useCallback(() => setSaved((saved) => !saved), []);
+    const toastSaved = saved ? (
+        <Toast content={`Book ${title} saved successfully`} onDismiss={toggleSaved} />
+    ) : null;
 
     const handleSelectAuthorChange = useCallback((value) => setSelectedAuthor(value), []);
     const handleSelectGenreChange = useCallback((value) => setSelectedGenre(value), []);
@@ -32,6 +39,7 @@ const Create = () => {
 
     const handleSubmit = useCallback(
         () => {
+            setIsLoading(isLoading => !isLoading);
             try {
                 api
                     .post('/catalog/book/create',
@@ -44,16 +52,23 @@ const Create = () => {
                         })
                     .then(res => {
                         console.log(res);
+                        toggleSaved();
+                        setTitle('');
+                        setSummary('');
+                        setISBN('');
                     })
                     .catch(err => {
                         console.log(err);
+                    })
+                    .finally(() => {
+                        setIsLoading(isLoading => !isLoading);
                     });
 
             } catch (error) {
                 console.log(error);
             }
         },
-        [title, selectedAuthor, summary, isbn, selectedGenre]
+        [title, selectedAuthor, summary, isbn, selectedGenre, toggleSaved]
     );
 
     useEffect(() => {
@@ -141,9 +156,12 @@ const Create = () => {
                                 onChange={handleSelectGenreChange}
                                 value={selectedGenre}
                             />
-                            <Button primary submit>
-                                Save
-                            </Button>
+                            {isLoading ?
+                                <Button primary submit loading> Save </Button>
+                                :
+                                <Button primary submit> Save </Button>
+                            }
+                            {toastSaved}
                         </FormLayout>
                     </Form>
                 </Layout.Section>
