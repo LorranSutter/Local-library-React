@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Layout, ResourceList, ResourceItem, TextStyle } from '@shopify/polaris';
+import { Page, Layout, Card, ResourceList, ResourceItem, TextStyle } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
@@ -26,26 +26,28 @@ const Detail = ({ match }) => {
         <Page title={`Author: ${name}`}>
             <Layout>
                 <Layout.Section>
-                    <ResourceList
-                        items={authorBooks}
-                        renderItem={
-                            (item) => {
-                                return (
-                                    <ResourceItem
-                                        id={item._id}
-                                        url={`/book/detail/${item._id}`}
-                                    >
-                                        <h3>
-                                            <TextStyle variation="strong">{item.title}</TextStyle>
-                                        </h3>
-                                        <p>
-                                            {item.summary}
-                                        </p>
-                                    </ResourceItem>
-                                )
+                    <Card sectioned title="Copies">
+                        <ResourceList
+                            items={authorBooks}
+                            renderItem={
+                                (item) => {
+                                    return (
+                                        <ResourceItem
+                                            id={item._id}
+                                            url={`/book/detail/${item._id}`}
+                                        >
+                                            <h3>
+                                                <TextStyle variation="strong">{item.title}</TextStyle>
+                                            </h3>
+                                            <p>
+                                                {item.summary}
+                                            </p>
+                                        </ResourceItem>
+                                    )
+                                }
                             }
-                        }
-                    />
+                        />
+                    </Card>
                 </Layout.Section>
             </Layout>
         </Page>
