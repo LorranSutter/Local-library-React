@@ -26,7 +26,6 @@ const Detail = ({ match }) => {
         api
             .get(`/catalog/book/${match.params.id}`)
             .then(res => {
-                console.log(res.data)
                 setTitle(res.data.book.title);
                 setAuthor(res.data.book.author);
                 setSummary(res.data.book.summary);
@@ -64,29 +63,32 @@ const Detail = ({ match }) => {
                             {genre.map((item) => <Link key={item._id} url={`/genre/detail/${item._id}`}>{item.name} </Link>)}
                         </TextContainer>
                     </Card>
-                
+
                     <Card sectioned title="Copies">
-                        <ResourceList
-                            items={bookInstances}
-                            renderItem={
-                                (item) => {
-                                    return (
-                                        <ResourceItem
-                                            id={item._id}
-                                            url={`/bookinstance/detail/${item._id}`}
-                                        >
-                                            <TextContainer>
-                                                <TextStyle variation="strong">Status: {colorStatus(item.status)}</TextStyle>
-                                            </TextContainer>
-                                            <TextContainer>
-                                                <TextStyle variation="strong">Imprint: </TextStyle>
-                                                {item.imprint}
-                                            </TextContainer>
-                                        </ResourceItem>
-                                    )
+                        {bookInstances && !bookInstances.length ?
+                            'This book has no copies' :
+                            <ResourceList
+                                items={bookInstances}
+                                renderItem={
+                                    (item) => {
+                                        return (
+                                            <ResourceItem
+                                                id={item._id}
+                                                url={`/bookinstance/detail/${item._id}`}
+                                            >
+                                                <TextContainer>
+                                                    <TextStyle variation="strong">Status: {colorStatus(item.status)}</TextStyle>
+                                                </TextContainer>
+                                                <TextContainer>
+                                                    <TextStyle variation="strong">Imprint: </TextStyle>
+                                                    {item.imprint}
+                                                </TextContainer>
+                                            </ResourceItem>
+                                        )
+                                    }
                                 }
-                            }
-                        />
+                            />
+                        }
                     </Card>
                 </Layout.Section>
             </Layout>

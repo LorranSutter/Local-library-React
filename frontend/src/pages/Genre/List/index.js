@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
+import { Page, Layout, Link, ResourceList, ResourceItem } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
@@ -33,7 +33,7 @@ const List = () => {
                                         id={item._id}
                                         url={`/genre/detail/${item._id}`}
                                     >
-                                        {item.name}
+                                        <Link key={item._id} url={`/genre/detail/${item._id}`}>{item.name}</Link>
                                     </ResourceItem>
                                 )
                             }

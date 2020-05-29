@@ -14,7 +14,6 @@ const Detail = ({ match }) => {
             .then(res => {
                 setTitle(res.data.genre.name);
                 setGenreBooks(res.data.genre_books);
-                console.log(res.data.genre_books)
             })
             .catch(err => {
                 console.log(err)
@@ -28,26 +27,29 @@ const Detail = ({ match }) => {
             <Layout>
                 <Layout.Section>
                     <Card sectioned title="Copies">
-                        <ResourceList
-                            items={genreBooks}
-                            renderItem={
-                                (item) => {
-                                    return (
-                                        <ResourceItem
-                                            id={item._id}
-                                            url={`/book/detail/${item._id}`}
-                                        >
-                                            <h3>
-                                                <TextStyle variation="strong">{item.title}</TextStyle>
-                                            </h3>
-                                            <p>
-                                                {item.summary}
-                                            </p>
-                                        </ResourceItem>
-                                    )
+                        {genreBooks && !genreBooks.length ?
+                            'This genre has no books' :
+                            <ResourceList
+                                items={genreBooks}
+                                renderItem={
+                                    (item) => {
+                                        return (
+                                            <ResourceItem
+                                                id={item._id}
+                                                url={`/book/detail/${item._id}`}
+                                            >
+                                                <h3>
+                                                    <TextStyle variation="strong">{item.title}</TextStyle>
+                                                </h3>
+                                                <p>
+                                                    {item.summary}
+                                                </p>
+                                            </ResourceItem>
+                                        )
+                                    }
                                 }
-                            }
-                        />
+                            />
+                        }
                     </Card>
                 </Layout.Section>
             </Layout>

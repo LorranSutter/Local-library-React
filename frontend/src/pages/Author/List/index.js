@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Page, Layout, ResourceList, ResourceItem } from '@shopify/polaris';
+import Moment from 'react-moment';
+import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
@@ -33,8 +34,18 @@ const List = () => {
                                         id={item._id}
                                         url={`/author/detail/${item._id}`}
                                     >
-                                        {`${item.first_name} ${item.family_name} `}
-                                        {/* {`${item.date_of_birth} ${item.date_of_death}`} */}
+                                        <TextContainer>
+                                            <TextStyle variation="strong">
+                                                <Link key={item._id} url={`/author/detail/${item._id}`}>
+                                                    {`${item.first_name} ${item.family_name}`}
+                                                </Link>
+                                            </TextStyle>
+                                        </TextContainer>
+                                        <TextContainer>
+                                            {item.date_of_birth ? <Moment format="LL">{item.date_of_birth}</Moment> : ''}
+                                            {' - '}
+                                            {item.date_of_death ? <Moment format="LL">{item.date_of_death}</Moment> : ''}
+                                        </TextContainer>
                                     </ResourceItem>
                                 )
                             }

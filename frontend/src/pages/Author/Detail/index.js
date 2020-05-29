@@ -27,26 +27,29 @@ const Detail = ({ match }) => {
             <Layout>
                 <Layout.Section>
                     <Card sectioned title="Copies">
-                        <ResourceList
-                            items={authorBooks}
-                            renderItem={
-                                (item) => {
-                                    return (
-                                        <ResourceItem
-                                            id={item._id}
-                                            url={`/book/detail/${item._id}`}
-                                        >
-                                            <h3>
-                                                <TextStyle variation="strong">{item.title}</TextStyle>
-                                            </h3>
-                                            <p>
-                                                {item.summary}
-                                            </p>
-                                        </ResourceItem>
-                                    )
+                        {authorBooks && !authorBooks.length ?
+                            'This author has no books' :
+                            <ResourceList
+                                items={authorBooks}
+                                renderItem={
+                                    (item) => {
+                                        return (
+                                            <ResourceItem
+                                                id={item._id}
+                                                url={`/book/detail/${item._id}`}
+                                            >
+                                                <h3>
+                                                    <TextStyle variation="strong">{item.title}</TextStyle>
+                                                </h3>
+                                                <p>
+                                                    {item.summary}
+                                                </p>
+                                            </ResourceItem>
+                                        )
+                                    }
                                 }
-                            }
-                        />
+                            />
+                        }
                     </Card>
                 </Layout.Section>
             </Layout>
