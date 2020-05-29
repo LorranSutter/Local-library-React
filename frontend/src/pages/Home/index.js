@@ -12,8 +12,8 @@ const Home = () => {
     const [genres, setGenres] = useState();
     const [activeError, setActiveError] = useState(false);
 
-    const dataSpinner = (data) => {
-        return (<Link url='/catalog/books'>{data ?? <Spinner size='small' color='inkLightest' />}</Link>);
+    const dataSpinner = (data, url) => {
+        return (<Link url={`/${url}`}>{data ?? <Spinner size='small' color='inkLightest' />}</Link>);
     }
 
     const toggleActiveError = useCallback(() => setActiveError((active) => !active), []);
@@ -45,19 +45,19 @@ const Home = () => {
                     <Card sectioned title="The library has the following record counts">
                         <List>
                             <List.Item>
-                                Books: {dataSpinner(books)}
+                                Books: {dataSpinner(books, 'books')}
                             </List.Item>
                             <List.Item>
-                                Copies: {dataSpinner(copies)}
+                                Copies: {dataSpinner(copies, 'bookinstances')}
                             </List.Item>
                             <List.Item>
-                                Available copies: {dataSpinner(copiesAvailable)}
+                                Available copies: {dataSpinner(copiesAvailable, 'bookinstances')}
                             </List.Item>
                             <List.Item>
-                                Authors: {dataSpinner(authors)}
+                                Authors: {dataSpinner(authors, 'authors')}
                             </List.Item>
                             <List.Item>
-                                Genres: {dataSpinner(genres)}
+                                Genres: {dataSpinner(genres, 'genres')}
                             </List.Item>
                         </List>
                     </Card>
