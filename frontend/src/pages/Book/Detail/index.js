@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal } from '@shopify/polaris';
 
+import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';
 
 const Detail = ({ match }) => {
@@ -15,16 +16,6 @@ const Detail = ({ match }) => {
     const [genre, setGenre] = useState([]);
     const [bookInstances, setBookInstances] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
-
-    const colorStatus = (status) => {
-        let color = '#50B83C';
-
-        if (status === 'Maintenance') color = '#C4CDD5';
-        else if (status === 'Loaned') color = '#DE3618';
-        else if (status === 'Reserved') color = '#F49342';
-
-        return <span style={{ color: color }}>{status}</span>
-    }
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
 
@@ -101,7 +92,7 @@ const Detail = ({ match }) => {
                                                 url={`/bookinstance/detail/${item._id}`}
                                             >
                                                 <TextContainer>
-                                                    <TextStyle variation="strong">Status: {colorStatus(item.status)}</TextStyle>
+                                                    <TextStyle variation="strong">Status: <StatusColor status={item.status} /></TextStyle>
                                                 </TextContainer>
                                                 <TextContainer>
                                                     <TextStyle variation="strong">Imprint: </TextStyle>

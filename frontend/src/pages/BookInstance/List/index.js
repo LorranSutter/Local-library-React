@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Moment from 'react-moment';
 import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle, Toast } from '@shopify/polaris';
 
+import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';
 
 const List = (props) => {
@@ -14,16 +15,6 @@ const List = (props) => {
     const toastDeleted = showDeletedToast ? (
         <Toast content={deletedMsg} onDismiss={toggleDeleted} />
     ) : null;
-
-    const colorStatus = (status) => {
-        let color = '#50B83C';
-
-        if (status === 'Maintenance') color = '#C4CDD5';
-        else if (status === 'Loaned') color = '#DE3618';
-        else if (status === 'Reserved') color = '#F49342';
-
-        return <span style={{ color: color }}>{status}</span>
-    }
 
     const handleDeleted = useCallback(() => {
         if (props.history.location.state) {
@@ -69,7 +60,7 @@ const List = (props) => {
                                             {item.imprint}
                                         </TextContainer>
                                         <TextContainer>
-                                            <TextStyle variation="strong">Status: {colorStatus(item.status)}</TextStyle>
+                                            <TextStyle variation="strong">Status: <StatusColor status={item.status} /></TextStyle>
                                         </TextContainer>
                                         {item.status === 'Available' ? null :
                                             <TextContainer>

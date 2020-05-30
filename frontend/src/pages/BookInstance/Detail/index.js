@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import Moment from 'react-moment';
 import { Page, Layout, Card, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal } from '@shopify/polaris';
 
+import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';
 
 const Detail = ({ match }) => {
@@ -13,16 +14,6 @@ const Detail = ({ match }) => {
     const [bookInstance, setBookInstance] = useState([]);
     const [book, setBook] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
-
-    const colorStatus = (status) => {
-        let color = '#50B83C';
-
-        if (status === 'Maintenance') color = '#C4CDD5';
-        else if (status === 'Loaned') color = '#DE3618';
-        else if (status === 'Reserved') color = '#F49342';
-
-        return <span style={{ color: color }}>{status}</span>
-    }
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
 
@@ -73,7 +64,7 @@ const Detail = ({ match }) => {
                             {bookInstance.imprint}
                         </TextContainer>
                         <TextContainer>
-                            <TextStyle variation="strong">Status: {colorStatus(bookInstance.status)}</TextStyle>
+                            <TextStyle variation="strong">Status: <StatusColor status={bookInstance.status} /></TextStyle>
                         </TextContainer>
                         <TextContainer>
                             <TextStyle variation="strong">Due back: </TextStyle>
