@@ -1,13 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { Page, Layout, Link, ResourceList, ResourceItem } from '@shopify/polaris';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Page, Layout, Link, ResourceList, ResourceItem, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const List = () => {
+const List = (props) => {
 
     const [genres, setGenres] = useState([]);
+    const [deletedMsg, setDeletedMsg] = useState('');
+    const [showDeletedToast, setShowDeletedToast] = useState(false);
+
+    const toggleDeleted = useCallback(() => setShowDeletedToast((showDeletedToast) => !showDeletedToast), []);
+    const toastDeleted = showDeletedToast ? (
+        <Toast content={deletedMsg} onDismiss={toggleDeleted} />
+    ) : null;
+
+    const handleDeleted = useCallback(() => {
+        if (props.history.location.state) {
+            setDeletedMsg(props.history.location.state.deleted);
+            toggleDeleted();
+            props.history.replace({ state: undefined });
+        }
+    }, [props.history, toggleDeleted]);
 
     useEffect(() => {
+        handleDeleted();
         api
             .get('/catalog/genres')
             .then(res => {
@@ -15,10 +31,11 @@ const List = () => {
             })
             .catch(err => {
                 console.log(err)
+                throw new Error(err);
                 // TODO handle api error
             });
 
-    }, []);
+    }, [handleDeleted]);
 
     return (
         <Page title="Genre list">
@@ -40,6 +57,7 @@ const List = () => {
                         }
                     />
                 </Layout.Section>
+                {toastDeleted}
             </Layout>
         </Page>
     );

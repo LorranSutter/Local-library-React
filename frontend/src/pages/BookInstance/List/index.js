@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Moment from 'react-moment';
-import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle } from '@shopify/polaris';
+import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const List = () => {
+const List = (props) => {
 
     const [bookInstances, setBookInstances] = useState([]);
+    const [deletedMsg, setDeletedMsg] = useState('');
+    const [showDeletedToast, setShowDeletedToast] = useState(false);
+
+    const toggleDeleted = useCallback(() => setShowDeletedToast((showDeletedToast) => !showDeletedToast), []);
+    const toastDeleted = showDeletedToast ? (
+        <Toast content={deletedMsg} onDismiss={toggleDeleted} />
+    ) : null;
 
     const colorStatus = (status) => {
         let color = '#50B83C';
@@ -18,7 +25,16 @@ const List = () => {
         return <span style={{ color: color }}>{status}</span>
     }
 
+    const handleDeleted = useCallback(() => {
+        if (props.history.location.state) {
+            setDeletedMsg(props.history.location.state.deleted);
+            toggleDeleted();
+            props.history.replace({ state: undefined });
+        }
+    }, [props.history, toggleDeleted]);
+
     useEffect(() => {
+        handleDeleted();
         api
             .get('/catalog/bookInstances')
             .then(res => {
@@ -29,7 +45,7 @@ const List = () => {
                 // TODO handle api error
             });
 
-    }, []);
+    }, [handleDeleted]);
 
     return (
         <Page title="Book instance list">
@@ -67,6 +83,7 @@ const List = () => {
                         }
                     />
                 </Layout.Section>
+                {toastDeleted}
             </Layout>
         </Page>
     );

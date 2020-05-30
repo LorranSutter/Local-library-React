@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import Moment from 'react-moment';
-import { Page, Layout, Card, TextContainer, TextStyle, Link } from '@shopify/polaris';
+import { Page, Layout, Card, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
 const Detail = ({ match }) => {
 
+    const history = useHistory();
+
     const [id, setId] = useState('')
     const [bookInstance, setBookInstance] = useState([]);
     const [book, setBook] = useState([]);
+    const [activeModal, setActiveModal] = useState(false);
 
     const colorStatus = (status) => {
         let color = '#50B83C';
@@ -19,6 +23,26 @@ const Detail = ({ match }) => {
 
         return <span style={{ color: color }}>{status}</span>
     }
+
+    const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
+
+    const handleDelete = useCallback(() => {
+        try {
+            api
+                .delete(`/catalog/bookinstance/${match.params.id}`)
+                .then((res) => {
+                    if (res.status === 200) {
+                        history.push('/bookinstances', { 'deleted': `Book Instance deleted successfully` });
+                    }
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                    // TODO handle api error
+                })
+        } catch (error) {
+
+        }
+    }, [match.params.id, history]);
 
     useEffect(() => {
         api
@@ -57,7 +81,34 @@ const Detail = ({ match }) => {
                         </TextContainer>
                     </Card>
                 </Layout.Section>
+                <Layout.Section>
+                    <ButtonGroup>
+                        <Button>Update</Button>
+                        <Button destructive onClick={handleToggleModal}>Delete</Button>
+                    </ButtonGroup>
+                </Layout.Section>
             </Layout>
+            <Modal
+                open={activeModal}
+                onClose={handleToggleModal}
+                primaryAction={{
+                    content: 'Delete',
+                    onAction: handleDelete,
+                    destructive: true
+                }}
+                secondaryActions={[
+                    {
+                        content: 'Cancel',
+                        onAction: handleToggleModal,
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <TextContainer>
+                        Do you really want to delete this book instance?
+                    </TextContainer>
+                </Modal.Section>
+            </Modal>
         </Page>
     );
 }

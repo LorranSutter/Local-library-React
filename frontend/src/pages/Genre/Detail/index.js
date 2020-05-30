@@ -1,18 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { Page, Layout, Card, ResourceList, ResourceItem, TextStyle } from '@shopify/polaris';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
 const Detail = ({ match }) => {
 
-    const [title, setTitle] = useState('')
+    const history = useHistory();
+
+    const [name, setName] = useState('')
     const [genreBooks, setGenreBooks] = useState([]);
+    const [activeModal, setActiveModal] = useState(false);
+
+    const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
+
+    const handleDelete = useCallback(() => {
+        try {
+            api
+                .delete(`/catalog/genre/${match.params.id}`)
+                .then((res) => {
+                    if (res.status === 200) {
+                        history.push('/genres', { 'deleted': `Genre ${name} deleted successfully` });
+                    }
+                })
+                .catch((err) => {
+                    throw new Error(err);
+                    // TODO handle api error
+                })
+        } catch (error) {
+
+        }
+    }, [match.params.id, history, name]);
 
     useEffect(() => {
         api
             .get(`/catalog/genre/${match.params.id}`)
             .then(res => {
-                setTitle(res.data.genre.name);
+                setName(res.data.genre.name);
                 setGenreBooks(res.data.genre_books);
             })
             .catch(err => {
@@ -23,7 +47,7 @@ const Detail = ({ match }) => {
     }, [match]);
 
     return (
-        <Page title={`Genre: ${title}`}>
+        <Page title={`Genre: ${name}`}>
             <Layout>
                 <Layout.Section>
                     <Card sectioned title="Copies">
@@ -52,7 +76,34 @@ const Detail = ({ match }) => {
                         }
                     </Card>
                 </Layout.Section>
+                <Layout.Section>
+                    <ButtonGroup>
+                        <Button>Update</Button>
+                        <Button destructive onClick={handleToggleModal}>Delete</Button>
+                    </ButtonGroup>
+                </Layout.Section>
             </Layout>
+            <Modal
+                open={activeModal}
+                onClose={handleToggleModal}
+                primaryAction={{
+                    content: 'Delete',
+                    onAction: handleDelete,
+                    destructive: true
+                }}
+                secondaryActions={[
+                    {
+                        content: 'Cancel',
+                        onAction: handleToggleModal,
+                    },
+                ]}
+            >
+                <Modal.Section>
+                    <TextContainer>
+                        Do you really want to delete this genre <TextStyle variation="strong">{name}</TextStyle>?
+                    </TextContainer>
+                </Modal.Section>
+            </Modal>
         </Page>
     );
 }

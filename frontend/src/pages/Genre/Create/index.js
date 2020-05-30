@@ -26,7 +26,6 @@ const Create = () => {
                 api
                     .post('/catalog/genre/create', { name })
                     .then(res => {
-                        console.log(res);
                         toggleSaved();
                         setName('');
                     })

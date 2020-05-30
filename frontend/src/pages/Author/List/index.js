@@ -1,14 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Moment from 'react-moment';
-import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle } from '@shopify/polaris';
+import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const List = () => {
+const List = (props) => {
 
     const [authors, setAuthors] = useState([]);
+    const [deletedMsg, setDeletedMsg] = useState('');
+    const [showDeletedToast, setShowDeletedToast] = useState(false);
+
+    const toggleDeleted = useCallback(() => setShowDeletedToast((showDeletedToast) => !showDeletedToast), []);
+    const toastDeleted = showDeletedToast ? (
+        <Toast content={deletedMsg} onDismiss={toggleDeleted} />
+    ) : null;
+
+    const handleDeleted = useCallback(() => {
+        if (props.history.location.state) {
+            setDeletedMsg(props.history.location.state.deleted);
+            toggleDeleted();
+            props.history.replace({ state: undefined });
+        }
+    }, [props.history, toggleDeleted]);
 
     useEffect(() => {
+        handleDeleted();
         api
             .get('/catalog/authors')
             .then(res => {
@@ -19,7 +35,7 @@ const List = () => {
                 // TODO handle api error
             });
 
-    }, []);
+    }, [handleDeleted]);
 
     return (
         <Page title="Author list">
@@ -52,6 +68,7 @@ const List = () => {
                         }
                     />
                 </Layout.Section>
+                {toastDeleted}
             </Layout>
         </Page>
     );
