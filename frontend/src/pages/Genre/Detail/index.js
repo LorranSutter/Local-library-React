@@ -1,23 +1,38 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal } from '@shopify/polaris';
+import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const Detail = ({ match }) => {
+const Detail = (props) => {
 
     const history = useHistory();
 
     const [name, setName] = useState('')
     const [genreBooks, setGenreBooks] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
+    const [updatedMsg, setDeletedMsg] = useState('');
+    const [showUpdatedToast, setShowUpdatedToast] = useState(false);
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
+
+    const toggleUpdated = useCallback(() => setShowUpdatedToast((showUpdatedToast) => !showUpdatedToast), []);
+    const toastUpdated = showUpdatedToast ? (
+        <Toast content={updatedMsg} onDismiss={toggleUpdated} />
+    ) : null;
+
+    const handleUpdated = useCallback(() => {
+        if (props.history.location.state) {
+            setDeletedMsg(props.history.location.state.updated);
+            toggleUpdated();
+            props.history.replace({ state: undefined });
+        }
+    }, [props, toggleUpdated]);
 
     const handleDelete = useCallback(() => {
         try {
             api
-                .delete(`/catalog/genre/${match.params.id}`)
+                .delete(`/catalog/genre/${props.match.params.id}`)
                 .then((res) => {
                     if (res.status === 200) {
                         history.push('/genres', { 'deleted': `Genre ${name} deleted successfully` });
@@ -30,11 +45,16 @@ const Detail = ({ match }) => {
         } catch (error) {
 
         }
-    }, [match.params.id, history, name]);
+    }, [props, history, name]);
+
+    const handleUpdate = useCallback(() => {
+        history.push('/genre/create', { 'id': props.match.params.id, 'name': name });
+    }, [history, name, props]);
 
     useEffect(() => {
+        handleUpdated();
         api
-            .get(`/catalog/genre/${match.params.id}`)
+            .get(`/catalog/genre/${props.match.params.id}`)
             .then(res => {
                 setName(res.data.genre.name);
                 setGenreBooks(res.data.genre_books);
@@ -44,7 +64,7 @@ const Detail = ({ match }) => {
                 // TODO handle api error
             });
 
-    }, [match]);
+    }, [props, handleUpdated]);
 
     return (
         <Page title={`Genre: ${name}`}>
@@ -78,7 +98,7 @@ const Detail = ({ match }) => {
                 </Layout.Section>
                 <Layout.Section>
                     <ButtonGroup>
-                        <Button>Update</Button>
+                        <Button onClick={handleUpdate}>Update</Button>
                         <Button destructive onClick={handleToggleModal}>Delete</Button>
                     </ButtonGroup>
                 </Layout.Section>
@@ -104,6 +124,7 @@ const Detail = ({ match }) => {
                     </TextContainer>
                 </Modal.Section>
             </Modal>
+            {toastUpdated}
         </Page>
     );
 }

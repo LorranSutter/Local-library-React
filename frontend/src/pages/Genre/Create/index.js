@@ -1,11 +1,16 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Page, Layout, Form, FormLayout, TextField, Button, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const Create = () => {
+const Create = (props) => {
 
+    const history = useHistory();
+
+    const [id, setId] = useState('');
     const [name, setName] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saved, setSaved] = useState(false);
 
@@ -23,9 +28,17 @@ const Create = () => {
         () => {
             setIsLoading(isLoading => !isLoading);
             try {
-                api
-                    .post('/catalog/genre/create', { name })
-                    .then(res => {
+
+                const apiResponse = isUpdating ?
+                    api.put(`/catalog/genre/${id}`, { name }) :
+                    api.post('/catalog/genre/create', { name });
+
+                apiResponse
+                    .then(() => {
+                        if (isUpdating) {
+                            history.push(`/genre/detail/${id}`, { 'updated': `Genre ${name} updated successfully` });
+                        }
+
                         toggleSaved();
                         setName('');
                     })
@@ -40,8 +53,16 @@ const Create = () => {
                 console.log(error);
             }
         },
-        [name, toggleSaved]
+        [id, name, isUpdating, history, toggleSaved]
     );
+
+    useEffect(() => {
+        if (props.history.location.state) {
+            setIsUpdating(true);
+            setId(props.history.location.state.id);
+            setName(props.history.location.state.name);
+        }
+    }, [props]);
 
     return (
         <Page title='Create Genre'>
