@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle, Toast } from '@shopify/polaris';
+import {
+    Page,
+    Layout,
+    Link,
+    ResourceList,
+    ResourceItem,
+    TextContainer,
+    TextStyle,
+    Toast
+} from '@shopify/polaris';
 
 import api from '../../../services/api';
 

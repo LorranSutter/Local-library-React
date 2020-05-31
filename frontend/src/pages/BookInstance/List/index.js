@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Moment from 'react-moment';
-import { Page, Layout, Link, ResourceList, ResourceItem, TextContainer, TextStyle, Toast } from '@shopify/polaris';
+import {
+    Page,
+    Layout,
+    Link,
+    ResourceList,
+    ResourceItem,
+    TextContainer,
+    TextStyle,
+    Toast
+} from '@shopify/polaris';
 
 import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';

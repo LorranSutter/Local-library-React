@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Page, Layout, Form, FormLayout, TextField, Button, Toast } from '@shopify/polaris';
+import {
+    Page,
+    Layout,
+    Form,
+    FormLayout,
+    TextField,
+    Button,
+    Toast
+} from '@shopify/polaris';
 
 import api from '../../../services/api';
 

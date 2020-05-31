@@ -1,5 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Page, Layout, Card, List, Link, Spinner, Toast } from '@shopify/polaris';
+import {
+    Page,
+    Layout,
+    Card,
+    List,
+    Link,
+    Spinner,
+    Toast
+} from '@shopify/polaris';
 
 import api from '../../services/api';
 

@@ -1,6 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal, Toast } from '@shopify/polaris';
+import {
+    Page,
+    Layout,
+    Card,
+    ResourceList,
+    ResourceItem,
+    TextContainer,
+    TextStyle,
+    Link,
+    ButtonGroup,
+    Button,
+    Modal,
+    Toast
+} from '@shopify/polaris';
 
 import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';

@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal, Toast } from '@shopify/polaris';
+import {
+    Page,
+    Layout,
+    Card,
+    ResourceList,
+    ResourceItem,
+    TextContainer,
+    TextStyle,
+    ButtonGroup,
+    Button,
+    Modal,
+    Toast
+} from '@shopify/polaris';
 
 import moment from 'moment';
 
