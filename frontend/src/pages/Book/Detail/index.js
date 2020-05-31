@@ -59,23 +59,24 @@ const Detail = ({ match }) => {
         <Page title={title}>
             <Layout>
                 <Layout.Section>
-                    {/* TODO Format spacing */}
                     <Card sectioned title="Info">
-                        <TextContainer>
-                            <TextStyle variation="strong">Author: </TextStyle>
-                            <Link url={`/author/detail/${author._id}`}>{`${author.family_name}, ${author.first_name}`}</Link>
-                        </TextContainer>
-                        <TextContainer>
-                            <TextStyle variation="strong">Summary: </TextStyle>
-                            {summary}
-                        </TextContainer>
-                        <TextContainer>
-                            <TextStyle variation="strong">ISBN: </TextStyle>
-                            {isbn}
-                        </TextContainer>
-                        <TextContainer>
-                            <TextStyle variation="strong">Genre: </TextStyle>
-                            {genre.map((item) => <Link key={item._id} url={`/genre/detail/${item._id}`}>{item.name} </Link>)}
+                        <TextContainer spacing="tight">
+                            <TextContainer>
+                                <TextStyle variation="strong">Author: </TextStyle>
+                                <Link url={`/author/detail/${author._id}`}>{`${author.family_name}, ${author.first_name}`}</Link>
+                            </TextContainer>
+                            <TextContainer>
+                                <TextStyle variation="strong">Summary: </TextStyle>
+                                {summary}
+                            </TextContainer>
+                            <TextContainer>
+                                <TextStyle variation="strong">ISBN: </TextStyle>
+                                {isbn}
+                            </TextContainer>
+                            <TextContainer>
+                                <TextStyle variation="strong">Genre: </TextStyle>
+                                {genre.map((item) => <Link key={item._id} url={`/genre/detail/${item._id}`}>{item.name} </Link>)}
+                            </TextContainer>
                         </TextContainer>
                     </Card>
 
