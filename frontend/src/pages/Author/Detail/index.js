@@ -1,30 +1,48 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal } from '@shopify/polaris';
+import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal, Toast } from '@shopify/polaris';
 
 import moment from 'moment';
 
 import api from '../../../services/api';
 
-const Detail = ({ match }) => {
+const Detail = (props) => {
 
     const history = useHistory();
 
-    const [name, setName] = useState('')
+    const [firstName, setFirstName] = useState('');
+    const [familyName, setFamilyName] = useState('');
     const [dateBirth, setDateBirth] = useState('');
     const [dateDeath, setDateDeath] = useState('');
     const [authorBooks, setAuthorBooks] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
+    const [updatedMsg, setUpdatedMsg] = useState('');
+    const [showUpdatedToast, setShowUpdatedToast] = useState(false);
+
+    const formattedDate = `${dateBirth ? moment(dateBirth).format('LL') : ''} - ${dateDeath ? moment(dateDeath).format('LL') : ''}`;
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
+
+    const toggleUpdated = useCallback(() => setShowUpdatedToast((showUpdatedToast) => !showUpdatedToast), []);
+    const toastUpdated = showUpdatedToast ? (
+        <Toast content={updatedMsg} onDismiss={toggleUpdated} />
+    ) : null;
+
+    const handleUpdated = useCallback(() => {
+        if (props.history.location.state) {
+            setUpdatedMsg(props.history.location.state.updated);
+            toggleUpdated();
+            props.history.replace({ state: undefined });
+        }
+    }, [props, toggleUpdated]);
 
     const handleDelete = useCallback(() => {
         try {
             api
-                .delete(`/catalog/author/${match.params.id}`)
+                .delete(`/catalog/author/${props.match.params.id}`)
                 .then((res) => {
                     if (res.status === 200) {
-                        history.push('/authors', { 'deleted': `Author ${name} deleted successfully` });
+                        history.push('/authors', { 'deleted': `Author ${firstName} ${familyName} deleted successfully` });
                     }
                 })
                 .catch((err) => {
@@ -34,15 +52,27 @@ const Detail = ({ match }) => {
         } catch (error) {
 
         }
-    }, [match.params.id, history, name]);
+    }, [props, history, firstName, familyName]);
+
+    const handleUpdate = useCallback(() => {
+        history.push('/author/create', {
+            'id': props.match.params.id,
+            'firstName': firstName,
+            'familyName': familyName,
+            'dateBirth': moment(dateBirth).format('YYYY-MM-DD'),
+            'dateDeath': moment(dateDeath).format('YYYY-MM-DD')
+        });
+    }, [history, firstName, familyName, dateBirth, dateDeath, props]);
 
     useEffect(() => {
+        handleUpdated()
         api
-            .get(`/catalog/author/${match.params.id}`)
+            .get(`/catalog/author/${props.match.params.id}`)
             .then(res => {
-                setName(`${res.data.author.family_name}, ${res.data.author.first_name}`);
-                setDateBirth(res.data.author.date_of_birth ? moment(res.data.author.date_of_birth).format('LL') : '');
-                setDateDeath(res.data.author.date_of_death ? moment(res.data.author.date_of_death).format('LL') : '');
+                setFirstName(res.data.author.first_name);
+                setFamilyName(res.data.author.family_name);
+                setDateBirth(res.data.author.date_of_birth);
+                setDateDeath(res.data.author.date_of_death);
                 setAuthorBooks(res.data.author_books);
             })
             .catch(err => {
@@ -50,10 +80,10 @@ const Detail = ({ match }) => {
                 // TODO handle api error
             });
 
-    }, [match]);
+    }, [props, handleUpdated]);
 
     return (
-        <Page title={`Author: ${name}`} subtitle={`${dateBirth} - ${dateDeath}`}>
+        <Page title={`Author: ${familyName}, ${firstName}`} subtitle={formattedDate}>
             <Layout>
                 <Layout.Section>
                     <Card sectioned title="Copies">
@@ -84,7 +114,7 @@ const Detail = ({ match }) => {
                 </Layout.Section>
                 <Layout.Section>
                     <ButtonGroup>
-                        <Button>Update</Button>
+                        <Button onClick={handleUpdate}>Update</Button>
                         <Button destructive onClick={handleToggleModal}>Delete</Button>
                     </ButtonGroup>
                 </Layout.Section>
@@ -106,10 +136,11 @@ const Detail = ({ match }) => {
             >
                 <Modal.Section>
                     <TextContainer>
-                        Do you really want to delete this author <TextStyle variation="strong">{name}</TextStyle>?
+                        Do you really want to delete this author <TextStyle variation="strong">{`${firstName} ${familyName}`}</TextStyle>?
                     </TextContainer>
                 </Modal.Section>
             </Modal>
+            {toastUpdated}
         </Page>
     );
 }

@@ -37,15 +37,14 @@ const Create = (props) => {
                     .then(() => {
                         if (isUpdating) {
                             history.push(`/genre/detail/${id}`, { 'updated': `Genre ${name} updated successfully` });
+                        } else {
+                            toggleSaved();
+                            setName('');
+                            setIsLoading(isLoading => !isLoading);
                         }
-
-                        toggleSaved();
-                        setName('');
                     })
                     .catch(err => {
                         console.log(err);
-                    })
-                    .finally(() => {
                         setIsLoading(isLoading => !isLoading);
                     });
 

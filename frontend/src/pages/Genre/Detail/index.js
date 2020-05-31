@@ -11,7 +11,7 @@ const Detail = (props) => {
     const [name, setName] = useState('')
     const [genreBooks, setGenreBooks] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
-    const [updatedMsg, setDeletedMsg] = useState('');
+    const [updatedMsg, setUpdatedMsg] = useState('');
     const [showUpdatedToast, setShowUpdatedToast] = useState(false);
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
@@ -23,7 +23,7 @@ const Detail = (props) => {
 
     const handleUpdated = useCallback(() => {
         if (props.history.location.state) {
-            setDeletedMsg(props.history.location.state.updated);
+            setUpdatedMsg(props.history.location.state.updated);
             toggleUpdated();
             props.history.replace({ state: undefined });
         }

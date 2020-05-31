@@ -1,14 +1,19 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Page, Layout, Form, FormLayout, TextField, Button, Toast } from '@shopify/polaris';
 
 import api from '../../../services/api';
 
-const Create = () => {
+const Create = (props) => {
 
+    const history = useHistory();
+
+    const [id, setId] = useState('');
     const [firstName, setFirstName] = useState('');
     const [familyName, setFamilyName] = useState('');
     const [dateBirth, setDateBirth] = useState('');
     const [dateDeath, setDateDeath] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saved, setSaved] = useState(false);
     // const [saveError, setSaveError] = useState(false);
@@ -39,26 +44,38 @@ const Create = () => {
         () => {
             setIsLoading(isLoading => !isLoading);
             try {
-                api
-                    .post('/catalog/author/create',
+
+                const apiResponse = isUpdating ?
+                    api.put(`/catalog/author/${id}`,
                         {
                             first_name: firstName,
                             family_name: familyName,
                             date_of_birth: dateBirth,
                             date_of_death: dateDeath
-                        })
-                    .then(res => {
-                        console.log(res);
-                        toggleSaved();
-                        setFirstName('');
-                        setFamilyName('');
-                        setDateBirth('');
-                        setDateDeath('');
+                        }) :
+                    api.post('/catalog/author/create',
+                        {
+                            first_name: firstName,
+                            family_name: familyName,
+                            date_of_birth: dateBirth,
+                            date_of_death: dateDeath
+                        });
+
+                apiResponse
+                    .then(() => {
+                        if (isUpdating) {
+                            history.push(`/author/detail/${id}`, { 'updated': `Author ${firstName} ${familyName} updated successfully` });
+                        } else {
+                            toggleSaved();
+                            setFirstName('');
+                            setFamilyName('');
+                            setDateBirth('');
+                            setDateDeath('');
+                            setIsLoading(isLoading => !isLoading);
+                        }
                     })
                     .catch(err => {
                         console.log(err);
-                    })
-                    .finally(() => {
                         setIsLoading(isLoading => !isLoading);
                     });
 
@@ -66,8 +83,19 @@ const Create = () => {
                 console.log(error);
             }
         },
-        [firstName, familyName, dateBirth, dateDeath, toggleSaved]
+        [id, firstName, familyName, dateBirth, dateDeath, history, isUpdating, toggleSaved]
     );
+
+    useEffect(() => {
+        if (props.history.location.state) {
+            setIsUpdating(true);
+            setId(props.history.location.state.id);
+            setFirstName(props.history.location.state.firstName);
+            setFamilyName(props.history.location.state.familyName);
+            setDateBirth(props.history.location.state.dateBirth);
+            setDateDeath(props.history.location.state.dateDeath);
+        }
+    }, [props]);
 
     return (
         <Page title='Create Author'>
