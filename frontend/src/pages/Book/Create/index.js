@@ -1,11 +1,16 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Page, Layout, Form, FormLayout, TextField, Select, Button, Toast } from '@shopify/polaris';
+
 import axios from 'axios';
 
 import api from '../../../services/api';
 
-const Create = () => {
+const Create = (props) => {
 
+    const history = useHistory();
+
+    const [id, setId] = useState('');
     const [title, setTitle] = useState('');
     const [authors, setAuthors] = useState([]);
     const [selectedAuthor, setSelectedAuthor] = useState('');
@@ -13,6 +18,7 @@ const Create = () => {
     const [isbn, setISBN] = useState('');
     const [genres, setGenres] = useState([]);
     const [selectedGenre, setSelectedGenre] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saved, setSaved] = useState(false);
 
@@ -41,8 +47,9 @@ const Create = () => {
         () => {
             setIsLoading(isLoading => !isLoading);
             try {
-                api
-                    .post('/catalog/book/create',
+
+                const apiResponse = isUpdating ?
+                    api.put(`/catalog/book/${id}`,
                         {
                             title: title,
                             author: selectedAuthor,
@@ -50,17 +57,30 @@ const Create = () => {
                             isbn: isbn,
                             genre: selectedGenre
                         })
-                    .then(res => {
-                        console.log(res);
-                        toggleSaved();
-                        setTitle('');
-                        setSummary('');
-                        setISBN('');
+                    :
+                    api.post('/catalog/book/create',
+                        {
+                            title: title,
+                            author: selectedAuthor,
+                            summary: summary,
+                            isbn: isbn,
+                            genre: selectedGenre
+                        });
+
+                apiResponse
+                    .then(() => {
+                        if (isUpdating) {
+                            history.push(`/book/detail/${id}`, { 'updated': `Book ${title} updated successfully` });
+                        } else {
+                            toggleSaved();
+                            setTitle('');
+                            setSummary('');
+                            setISBN('');
+                            setIsLoading(isLoading => !isLoading);
+                        }
                     })
                     .catch(err => {
                         console.log(err);
-                    })
-                    .finally(() => {
                         setIsLoading(isLoading => !isLoading);
                     });
 
@@ -68,7 +88,7 @@ const Create = () => {
                 console.log(error);
             }
         },
-        [title, selectedAuthor, summary, isbn, selectedGenre, toggleSaved]
+        [id, title, selectedAuthor, summary, isbn, selectedGenre, isUpdating, history, toggleSaved]
     );
 
     useEffect(() => {
@@ -79,8 +99,18 @@ const Create = () => {
                     api.get('/catalog/genres')
                 ])
                 .then(axios.spread((_authors, _genres) => {
-                    setSelectedAuthor(_authors.data.author_list[0]._id);
-                    setSelectedGenre(_genres.data.genre_list[0]._id);
+                    if (props.history.location.state) {
+                        setIsUpdating(true);
+                        setId(props.history.location.state.id);
+                        setTitle(props.history.location.state.title);
+                        setSelectedAuthor(props.history.location.state.author._id);
+                        setSummary(props.history.location.state.summary);
+                        setISBN(props.history.location.state.isbn);
+                        setSelectedGenre(props.history.location.state.genre[0]._id);
+                    } else {
+                        setSelectedAuthor(_authors.data.author_list[0]._id);
+                        setSelectedGenre(_genres.data.genre_list[0]._id);
+                    }
                     setAuthors(
                         _authors.data.author_list
                             .map((author) => {
@@ -107,7 +137,7 @@ const Create = () => {
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [props]);
 
     return (
         <Page title='Create Book'>

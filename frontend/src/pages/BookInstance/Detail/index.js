@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import Moment from 'react-moment';
-import { Page, Layout, Card, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal } from '@shopify/polaris';
+import { Page, Layout, Card, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal, Toast } from '@shopify/polaris';
 
 import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';
 
-const Detail = ({ match }) => {
+const Detail = (props) => {
 
     const history = useHistory();
 
@@ -14,13 +14,28 @@ const Detail = ({ match }) => {
     const [bookInstance, setBookInstance] = useState([]);
     const [book, setBook] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
+    const [updatedMsg, setUpdatedMsg] = useState('');
+    const [showUpdatedToast, setShowUpdatedToast] = useState(false);
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
+
+    const toggleUpdated = useCallback(() => setShowUpdatedToast((showUpdatedToast) => !showUpdatedToast), []);
+    const toastUpdated = showUpdatedToast ? (
+        <Toast content={updatedMsg} onDismiss={toggleUpdated} />
+    ) : null;
+
+    const handleUpdated = useCallback(() => {
+        if (props.history.location.state) {
+            setUpdatedMsg(props.history.location.state.updated);
+            toggleUpdated();
+            props.history.replace({ state: undefined });
+        }
+    }, [props, toggleUpdated]);
 
     const handleDelete = useCallback(() => {
         try {
             api
-                .delete(`/catalog/bookinstance/${match.params.id}`)
+                .delete(`/catalog/bookinstance/${props.match.params.id}`)
                 .then((res) => {
                     if (res.status === 200) {
                         history.push('/bookinstances', { 'deleted': `Book Instance deleted successfully` });
@@ -33,11 +48,20 @@ const Detail = ({ match }) => {
         } catch (error) {
 
         }
-    }, [match.params.id, history]);
+    }, [props, history]);
+
+    const handleUpdate = useCallback(() => {
+        history.push('/bookinstance/create', {
+            'id': props.match.params.id,
+            'book': book,
+            'bookinstance': bookInstance
+        });
+    }, [history, book, bookInstance, props]);
 
     useEffect(() => {
+        handleUpdated();
         api
-            .get(`/catalog/bookinstance/${match.params.id}`)
+            .get(`/catalog/bookinstance/${props.match.params.id}`)
             .then(res => {
                 setId(res.data.bookinstance._id);
                 setBookInstance(res.data.bookinstance);
@@ -48,7 +72,7 @@ const Detail = ({ match }) => {
                 // TODO handle api error
             });
 
-    }, [match]);
+    }, [props, handleUpdated]);
 
     return (
         <Page title={`Id: ${id}`}>
@@ -74,7 +98,7 @@ const Detail = ({ match }) => {
                 </Layout.Section>
                 <Layout.Section>
                     <ButtonGroup>
-                        <Button>Update</Button>
+                        <Button onClick={handleUpdate}>Update</Button>
                         <Button destructive onClick={handleToggleModal}>Delete</Button>
                     </ButtonGroup>
                 </Layout.Section>
@@ -100,6 +124,7 @@ const Detail = ({ match }) => {
                     </TextContainer>
                 </Modal.Section>
             </Modal>
+            {toastUpdated}
         </Page>
     );
 }

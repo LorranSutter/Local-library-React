@@ -1,28 +1,43 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal } from '@shopify/polaris';
+import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, Link, ButtonGroup, Button, Modal, Toast } from '@shopify/polaris';
 
 import StatusColor from '../../../components/StatusColor';
 import api from '../../../services/api';
 
-const Detail = ({ match }) => {
+const Detail = (props) => {
 
     const history = useHistory();
 
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [summary, setSummary] = useState('');
-    const [isbn, setIsbn] = useState('');
+    const [isbn, setISBN] = useState('');
     const [genre, setGenre] = useState([]);
     const [bookInstances, setBookInstances] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
+    const [updatedMsg, setUpdatedMsg] = useState('');
+    const [showUpdatedToast, setShowUpdatedToast] = useState(false);
 
     const handleToggleModal = useCallback(() => setActiveModal(!activeModal), [activeModal]);
+
+    const toggleUpdated = useCallback(() => setShowUpdatedToast((showUpdatedToast) => !showUpdatedToast), []);
+    const toastUpdated = showUpdatedToast ? (
+        <Toast content={updatedMsg} onDismiss={toggleUpdated} />
+    ) : null;
+
+    const handleUpdated = useCallback(() => {
+        if (props.history.location.state) {
+            setUpdatedMsg(props.history.location.state.updated);
+            toggleUpdated();
+            props.history.replace({ state: undefined });
+        }
+    }, [props, toggleUpdated]);
 
     const handleDelete = useCallback(() => {
         try {
             api
-                .delete(`/catalog/book/${match.params.id}`)
+                .delete(`/catalog/book/${props.match.params.id}`)
                 .then((res) => {
                     if (res.status === 200) {
                         history.push('/books', { 'deleted': `Book ${title} deleted successfully` });
@@ -35,16 +50,28 @@ const Detail = ({ match }) => {
         } catch (error) {
 
         }
-    }, [match.params.id, history, title]);
+    }, [props, history, title]);
+
+    const handleUpdate = useCallback(() => {
+        history.push('/book/create', {
+            'id': props.match.params.id,
+            'title': title,
+            'author': author,
+            'summary': summary,
+            'isbn': isbn,
+            'genre': genre
+        });
+    }, [history, title, author, summary, isbn, genre, props]);
 
     useEffect(() => {
+        handleUpdated();
         api
-            .get(`/catalog/book/${match.params.id}`)
+            .get(`/catalog/book/${props.match.params.id}`)
             .then(res => {
                 setTitle(res.data.book.title);
                 setAuthor(res.data.book.author);
                 setSummary(res.data.book.summary);
-                setIsbn(res.data.book.isbn);
+                setISBN(res.data.book.isbn);
                 setGenre(res.data.book.genre);
                 setBookInstances(res.data.book_instances);
             })
@@ -53,7 +80,7 @@ const Detail = ({ match }) => {
                 // TODO handle api error
             });
 
-    }, [match]);
+    }, [props, handleUpdated]);
 
     return (
         <Page title={title}>
@@ -109,7 +136,7 @@ const Detail = ({ match }) => {
                 </Layout.Section>
                 <Layout.Section>
                     <ButtonGroup>
-                        <Button>Update</Button>
+                        <Button onClick={handleUpdate}>Update</Button>
                         <Button destructive onClick={handleToggleModal}>Delete</Button>
                     </ButtonGroup>
                 </Layout.Section>
@@ -135,6 +162,7 @@ const Detail = ({ match }) => {
                     </TextContainer>
                 </Modal.Section>
             </Modal>
+            {toastUpdated}
         </Page>
     );
 }

@@ -1,15 +1,22 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Page, Layout, Form, FormLayout, TextField, Select, Button, Toast } from '@shopify/polaris';
+
+import moment from 'moment';
 
 import api from '../../../services/api';
 
-const Create = () => {
+const Create = (props) => {
 
+    const history = useHistory();
+
+    const [id, setId] = useState([]);
     const [books, setBooks] = useState([]);
     const [selectedBook, setSelectedBook] = useState('');
     const [imprint, setImprint] = useState('');
     const [date, setDate] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('Maintenance');
+    const [isUpdating, setIsUpdating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saved, setSaved] = useState(false);
 
@@ -41,33 +48,46 @@ const Create = () => {
         () => {
             setIsLoading(isLoading => !isLoading);
             try {
-                api
-                    .post('/catalog/bookinstance/create',
+
+                const apiResponse = isUpdating ?
+                    api.put(`/catalog/bookinstance/${id}`,
                         {
                             book: selectedBook,
                             imprint: imprint,
                             status: selectedStatus,
                             due_back: date
                         })
-                    .then(res => {
-                        console.log(res);
-                        toggleSaved();
-                        setImprint('');
-                        setDate('');
-                        setSelectedStatus('Maintenance');
+                    :
+                    api.post('/catalog/bookinstance/create',
+                        {
+                            book: selectedBook,
+                            imprint: imprint,
+                            status: selectedStatus,
+                            due_back: date
+                        });
+
+                apiResponse
+                    .then(() => {
+                        if (isUpdating) {
+                            history.push(`/bookinstance/detail/${id}`, { 'updated': `Book Instance updated successfully` });
+                        } else {
+                            toggleSaved();
+                            setImprint('');
+                            setDate('');
+                            setSelectedStatus('Maintenance');
+                            setIsLoading(isLoading => !isLoading);
+                        }
                     })
                     .catch(err => {
                         console.log(err);
-                    })
-                    .finally(() => {
                         setIsLoading(isLoading => !isLoading);
-                    });
+                    })
 
             } catch (error) {
                 console.log(error);
             }
         },
-        [selectedBook, imprint, selectedStatus, date, toggleSaved]
+        [id, selectedBook, imprint, selectedStatus, date, isUpdating, history, toggleSaved]
     );
 
     useEffect(() => {
@@ -75,7 +95,16 @@ const Create = () => {
             api
                 .get('/catalog/books')
                 .then((res) => {
-                    setSelectedBook(res.data.book_list[0]._id);
+                    if (props.history.location.state) {
+                        setIsUpdating(true);
+                        setId(props.history.location.state.id);
+                        setSelectedBook(props.history.location.state.book._id);
+                        setImprint(props.history.location.state.bookinstance.imprint);
+                        setDate(moment(props.history.location.state.bookinstance.due_back).format('YYYY-MM-DD'));
+                        setSelectedStatus(props.history.location.state.bookinstance.status);
+                    } else {
+                        setSelectedBook(res.data.book_list[0]._id);
+                    }
                     setBooks(
                         res.data.book_list
                             .map((book) => {
@@ -93,7 +122,7 @@ const Create = () => {
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [props]);
 
     return (
         <Page title='Create Book Instance'>
