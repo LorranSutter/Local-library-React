@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Page, Layout, Card, ResourceList, ResourceItem, TextContainer, TextStyle, ButtonGroup, Button, Modal } from '@shopify/polaris';
 
+import moment from 'moment';
+
 import api from '../../../services/api';
 
 const Detail = ({ match }) => {
@@ -9,6 +11,8 @@ const Detail = ({ match }) => {
     const history = useHistory();
 
     const [name, setName] = useState('')
+    const [dateBirth, setDateBirth] = useState('');
+    const [dateDeath, setDateDeath] = useState('');
     const [authorBooks, setAuthorBooks] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
 
@@ -37,6 +41,8 @@ const Detail = ({ match }) => {
             .get(`/catalog/author/${match.params.id}`)
             .then(res => {
                 setName(`${res.data.author.family_name}, ${res.data.author.first_name}`);
+                setDateBirth(res.data.author.date_of_birth ? moment(res.data.author.date_of_birth).format('LL') : '');
+                setDateDeath(res.data.author.date_of_death ? moment(res.data.author.date_of_death).format('LL') : '');
                 setAuthorBooks(res.data.author_books);
             })
             .catch(err => {
@@ -47,7 +53,7 @@ const Detail = ({ match }) => {
     }, [match]);
 
     return (
-        <Page title={`Author: ${name}`}>
+        <Page title={`Author: ${name}`} subtitle={`${dateBirth} - ${dateDeath}`}>
             <Layout>
                 <Layout.Section>
                     <Card sectioned title="Copies">
