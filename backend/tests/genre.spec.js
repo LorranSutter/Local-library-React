@@ -259,15 +259,16 @@ describe('Genre', () => {
     });
 
     it('Genre not found in update', async done => {
-        const newGenre = new Genre(randomGenerator.generateGenre());
+        const newGenre1 = new Genre(randomGenerator.generateGenre());
+        const newGenre2 = new Genre(randomGenerator.generateGenre());
 
-        const resCreate = await newGenre.save();
+        const resCreate = await newGenre1.save();
 
         const newGenreId = randomGenerator.changeId(resCreate.id);
 
         request
             .put(`/catalog/genre/${newGenreId}`)
-            .send(newGenre)
+            .send(newGenre2)
             .end(function (err, res) {
 
                 if (err) return done(err);
@@ -292,6 +293,28 @@ describe('Genre', () => {
 
                 expect(res.status).toBe(422);
                 expect(res.body.errors).toContainEqual({ name: "Genre name required" });
+
+                done();
+            });
+    });
+
+    it('Cannot update genre, it is an existing genre', async done => {
+        const newGenre1 = new Genre(randomGenerator.generateGenre());
+        const newGenre2 = new Genre(randomGenerator.generateGenre());
+
+        await newGenre1.save();
+
+        const resCreate = await newGenre2.save();
+
+        request
+            .put(`/catalog/genre/${resCreate.id}`)
+            .send(newGenre1)
+            .end(function (err, res) {
+                if (err) return done(err);
+
+                expect(res.status).toBe(403);
+                expect(res.body.error.status).toBe(403);
+                expect(res.body.error.message).toBe(`Genre ${newGenre1.name} already exists`);
 
                 done();
             });

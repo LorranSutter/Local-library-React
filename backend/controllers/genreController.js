@@ -109,15 +109,25 @@ exports.genre_update = (req, res, next) => {
             name: req.body.name
         }
     );
+    
+    Genre
+        .findOne({ 'name': req.body.name })
+        .exec(function (err, found_genre) {
+            if (err) { return next(err); }
+            if (found_genre) {
+                // Genre exists, return a 403 error.
+                return next(errorHandler(`Genre ${genre.name} already exists`, 403));
+            }
 
-    // Data is valid. Update the record.
-    Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err, updatedGenre) {
-        if (err) { return next(err); }
-        if (!updatedGenre) {
-            return next(errorHandler(`Genre ${req.params.id} not found`, 404));
-        }
-        res.json({ message: `Genre ${req.params.id} updated successfully` });
-    });
+            // Data is valid. Update the record.
+            Genre.findByIdAndUpdate(req.params.id, genre, {}, function (err, updatedGenre) {
+                if (err) { return next(err); }
+                if (!updatedGenre) {
+                    return next(errorHandler(`Genre ${req.params.id} not found`, 404));
+                }
+                res.json({ message: `Genre ${req.params.id} updated successfully` });
+            });
+        });
 };
 
 
