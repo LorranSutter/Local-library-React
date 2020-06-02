@@ -69,9 +69,9 @@ const List = (props) => {
                                             {item.imprint}
                                         </TextContainer>
                                         <TextContainer>
-                                            <TextStyle variation="strong">Status: <StatusColor status={item.status} /></TextStyle>
+                                            <TextStyle variation="strong">Status: <StatusColor status={item.status.name} /></TextStyle>
                                         </TextContainer>
-                                        {item.status === 'Available' ? null :
+                                        {item.status.name === 'Available' ? null :
                                             <TextContainer>
                                                 <TextStyle variation="strong">Due back: </TextStyle>
                                                 <Moment format="LL">{item.due_back}</Moment>

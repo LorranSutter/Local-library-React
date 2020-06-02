@@ -133,7 +133,7 @@ const Detail = (props) => {
                                                 url={`/bookinstance/detail/${item._id}`}
                                             >
                                                 <TextContainer>
-                                                    <TextStyle variation="strong">Status: <StatusColor status={item.status} /></TextStyle>
+                                                    <TextStyle variation="strong">Status: <StatusColor status={item.status.name} /></TextStyle>
                                                 </TextContainer>
                                                 <TextContainer>
                                                     <TextStyle variation="strong">Imprint: </TextStyle>

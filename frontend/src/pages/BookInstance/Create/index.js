@@ -11,6 +11,7 @@ import {
     Toast
 } from '@shopify/polaris';
 
+import axios from 'axios';
 import moment from 'moment';
 
 import api from '../../../services/api';
@@ -24,7 +25,8 @@ const Create = (props) => {
     const [selectedBook, setSelectedBook] = useState('');
     const [imprint, setImprint] = useState('');
     const [date, setDate] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState('Maintenance');
+    const [selectedStatus, setSelectedStatus] = useState('');
+    const [statusOptions, setStatusOptions] = useState([]);
     const [isUpdating, setIsUpdating] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -36,13 +38,6 @@ const Create = (props) => {
 
     const handleSelectBookChange = useCallback((value) => setSelectedBook(value), []);
     const handleSelectStatusChange = useCallback((value) => setSelectedStatus(value), []);
-
-    const statusOptions = [
-        { label: 'Maintenance', value: 'Maintenance' },
-        { label: 'Available', value: 'Available' },
-        { label: 'Loaned', value: 'Loaned' },
-        { label: 'Reserved', value: 'Reserved' }
-    ];
 
     const handleSetImprint = useCallback(
         (value) => setImprint(value),
@@ -83,7 +78,7 @@ const Create = (props) => {
                             toggleSaved();
                             setImprint('');
                             setDate('');
-                            setSelectedStatus('Maintenance');
+                            setSelectedStatus(statusOptions[0].name);
                             setIsLoading(isLoading => !isLoading);
                         }
                     })
@@ -96,26 +91,30 @@ const Create = (props) => {
                 console.log(error);
             }
         },
-        [id, selectedBook, imprint, selectedStatus, date, isUpdating, history, toggleSaved]
+        [id, selectedBook, imprint, selectedStatus, date, statusOptions, isUpdating, history, toggleSaved]
     );
 
     useEffect(() => {
         try {
-            api
-                .get('/catalog/books')
-                .then((res) => {
+            axios
+                .all([
+                    api.get('/catalog/books'),
+                    api.get('/catalog/status')
+                ])
+                .then(axios.spread((_books, _status) => {
                     if (props.history.location.state) {
                         setIsUpdating(true);
                         setId(props.history.location.state.id);
                         setSelectedBook(props.history.location.state.book._id);
                         setImprint(props.history.location.state.bookinstance.imprint);
                         setDate(moment(props.history.location.state.bookinstance.due_back).format('YYYY-MM-DD'));
-                        setSelectedStatus(props.history.location.state.bookinstance.status);
+                        setSelectedStatus(props.history.location.state.bookinstance.status._id);
                     } else {
-                        setSelectedBook(res.data.book_list[0]._id);
+                        setSelectedBook(_books.data.book_list[0]._id);
+                        setSelectedStatus(_status.data.list_status[0]._id);
                     }
                     setBooks(
-                        res.data.book_list
+                        _books.data.book_list
                             .map((book) => {
                                 return {
                                     label: book.title,
@@ -123,7 +122,16 @@ const Create = (props) => {
                                 }
                             })
                     )
-                })
+                    setStatusOptions(
+                        _status.data.list_status
+                            .map((status) => {
+                                return {
+                                    label: status.name,
+                                    value: status._id
+                                }
+                            })
+                    )
+                }))
                 .catch(err => {
                     console.log(err);
                 });
