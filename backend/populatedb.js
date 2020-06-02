@@ -3,6 +3,7 @@
 console.log('This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0-mbdj7.mongodb.net/local_library?retryWrites=true');
 
 const async = require('async')
+const Status = require('./models/status');
 const Book = require('./models/book')
 const Author = require('./models/author')
 const Genre = require('./models/genre')
@@ -15,10 +16,25 @@ mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
+let statuss = []
 let authors = []
 let genres = []
 let books = []
 let bookinstances = []
+
+function statusCreate(name, cb) {
+  let newStatus = new Status({ name });
+
+  newStatus.save(function (err) {
+    if (err) {
+      cb(err, null)
+      return
+    }
+    console.log('New status: ' + newStatus.name);
+    statuss.push(newStatus)
+    cb(null, newStatus)
+  });
+}
 
 function authorCreate(first_name, family_name, d_birth, d_death, cb) {
   authordetail = { first_name: first_name, family_name: family_name }
@@ -39,7 +55,7 @@ function authorCreate(first_name, family_name, d_birth, d_death, cb) {
 }
 
 function genreCreate(name, cb) {
-  let genre = new Genre({ name: name });
+  let genre = new Genre({ name });
 
   genre.save(function (err) {
     if (err) {
@@ -95,8 +111,25 @@ function bookInstanceCreate(book, imprint, due_back, status, cb) {
   });
 }
 
+function populateStatus(cb) {
+  async.parallel([
+    function (callback) {
+      statusCreate('Available', callback);
+    },
+    function (callback) {
+      statusCreate('Maintenance', callback);
+    },
+    function (callback) {
+      statusCreate('Loaned', callback);
+    },
+    function (callback) {
+      statusCreate('Reserved', callback);
+    }
+  ],
+    cb);
+}
 
-function createGenreAuthors(cb) {
+function populateGenreAuthors(cb) {
   async.series([
     function (callback) {
       authorCreate('Patrick', 'Rothfuss', '1973-06-06', false, callback);
@@ -128,7 +161,7 @@ function createGenreAuthors(cb) {
 }
 
 
-function createBooks(cb) {
+function populateBooks(cb) {
   async.parallel([
     function (callback) {
       bookCreate('The Name of the Wind (The Kingkiller Chronicle, #1)', 'I have stolen princesses back from sleeping barrow kings. I burned down the town of Trebon. I have spent the night with Felurian and left with both my sanity and my life. I was expelled from the University at a younger age than most people are allowed in. I tread paths by moonlight that others fear to speak of during day. I have talked to Gods, loved women, and written songs that make the minstrels weep.', '9781473211896', authors[0], [genres[0],], callback);
@@ -157,40 +190,40 @@ function createBooks(cb) {
 }
 
 
-function createBookInstances(cb) {
+function populateBookInstances(cb) {
   async.parallel([
     function (callback) {
-      bookInstanceCreate(books[0], 'London Gollancz, 2014.', false, 'Available', callback)
+      bookInstanceCreate(books[0], 'London Gollancz, 2014.', false, statuss[0], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[1], ' Gollancz, 2011.', false, 'Loaned', callback)
+      bookInstanceCreate(books[1], ' Gollancz, 2011.', false, statuss[0], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[2], ' Gollancz, 2015.', false, false, callback)
+      bookInstanceCreate(books[2], ' Gollancz, 2015.', false, statuss[1], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback)
+      bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, statuss[1], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback)
+      bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, statuss[1], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, 'Available', callback)
+      bookInstanceCreate(books[3], 'New York Tom Doherty Associates, 2016.', false, statuss[2], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Available', callback)
+      bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, statuss[2], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Maintenance', callback)
+      bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, statuss[2], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, 'Loaned', callback)
+      bookInstanceCreate(books[4], 'New York, NY Tom Doherty Associates, LLC, 2015.', false, statuss[3], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[0], 'Imprint XXX2', false, false, callback)
+      bookInstanceCreate(books[0], 'Imprint XXX2', false, statuss[3], callback)
     },
     function (callback) {
-      bookInstanceCreate(books[1], 'Imprint XXX3', false, false, callback)
+      bookInstanceCreate(books[1], 'Imprint XXX3', false, statuss[3], callback)
     }
   ],
     // Optional callback
@@ -206,9 +239,10 @@ function deleteDatabse(cb) {
 
 async.series([
   deleteDatabse,
-  createGenreAuthors,
-  createBooks,
-  createBookInstances
+  populateStatus,
+  populateGenreAuthors,
+  populateBooks,
+  populateBookInstances
 ],
   // Optional callback
   function (err) {
@@ -216,6 +250,7 @@ async.series([
       console.log('FINAL ERR: ' + err);
     }
     else {
+      console.log('Status: ' + statuss.length);
       console.log('Authors: ' + authors.length);
       console.log('Genres: ' + genres.length);
       console.log('Books: ' + books.length);
