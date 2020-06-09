@@ -15,9 +15,9 @@ const BookInstanceSchema = new Schema(
       required: true
     },
     status: {
-      type: String,
-      required: true,
-      ref: 'Status'
+      type: Schema.Types.ObjectId,
+      ref: 'Status',
+      required: true
     },
     due_back: {
       type: Date,
