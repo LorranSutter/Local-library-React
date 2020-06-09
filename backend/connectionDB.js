@@ -1,8 +1,8 @@
 //Import the mongoose module
 const mongoose = require('mongoose');
 
-const dev_db_url = "mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library?retryWrites=true&w=majority";
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const MONGOURI = '<your-url>'
+const mongoDB = process.env.MONGODB_URI || MONGOURI;
 
 const InitiateMongoServer = async () => {
     try {

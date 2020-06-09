@@ -10,8 +10,8 @@ const Genre = require('./models/genre')
 const BookInstance = require('./models/bookinstance')
 
 const mongoose = require('mongoose');
-const mongoDB = "mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library?retryWrites=true&w=majority";
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+const MONGOURI = '<your-url>';
+mongoose.connect(MONGOURI, { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
