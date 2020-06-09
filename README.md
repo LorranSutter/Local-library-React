@@ -7,7 +7,7 @@ This project is an extension of a previous version of a tutorial from <a href='h
 </p>
 
 <p align="center">
-This application was developed using <a href='https://reactjs.org/'>React</a> as frontend, but also you can check this application implemented using Pug template <a href='https://github.com/LorranSutter/Local-library'>[here]</a>.
+This application was developed using <a href='https://reactjs.org/'>React</a> as frontend, but also you can check this application implemented using Pug template <a href='https://github.com/LorranSutter/Local-library'>here</a>.
 </p>
 
 <p align="center">
