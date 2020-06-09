@@ -15,7 +15,7 @@ const Home = () => {
 
     const [books, setBooks] = useState();
     const [copies, setCopies] = useState();
-    const [copiesAvailable, setCopiesAvailable] = useState();
+    // const [copiesAvailable, setCopiesAvailable] = useState();
     const [authors, setAuthors] = useState();
     const [genres, setGenres] = useState();
     const [activeError, setActiveError] = useState(false);
