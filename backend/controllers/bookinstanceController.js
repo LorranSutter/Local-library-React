@@ -9,6 +9,7 @@ exports.bookinstance_list = function (req, res, next) {
 
     BookInstance.find()
         .populate('book', 'title')
+        .populate('status')
         .exec(function (err, list_bookinstances) {
             if (err) { return next(err); }
             res.json({ bookinstance_list: list_bookinstances });
@@ -20,6 +21,7 @@ exports.bookinstance_detail = function (req, res, next) {
 
     BookInstance.findById(req.params.id)
         .populate('book', 'title')
+        .populate('status')
         .exec(function (err, bookinstance) {
             if (err) { return next(err); }
             if (!bookinstance) {

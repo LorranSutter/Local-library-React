@@ -14,9 +14,10 @@ exports.index = function (req, res, next) {
         book_instance_count: function (callback) {
             BookInstance.countDocuments({}, callback);
         },
-        book_instance_available_count: function (callback) {
-            BookInstance.countDocuments({ status: 'Available' }, callback);
-        },
+        // FIXME Retrieve available copies
+        // book_instance_available_count: function (callback) {
+        //     BookInstance.countDocuments({ status: 'Available' }, callback);
+        // },
         author_count: function (callback) {
             Author.countDocuments({}, callback);
         },

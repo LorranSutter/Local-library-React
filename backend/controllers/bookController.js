@@ -31,6 +31,7 @@ exports.book_detail = function (req, res, next) {
         book_instance: function (callback) {
 
             BookInstance.find({ 'book': req.params.id }, { 'book': 0 })
+                .populate('status')
                 .exec(callback);
         },
     }, function (err, results) {
