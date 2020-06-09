@@ -36,7 +36,8 @@ const Home = () => {
                 .then(res => {
                     setBooks(res.data.data.book_count);
                     setCopies(res.data.data.book_instance_count);
-                    setCopiesAvailable(res.data.data.book_instance_available_count);
+                    // FIXME Retrieve available copies
+                    // setCopiesAvailable(res.data.data.book_instance_available_count);
                     setAuthors(res.data.data.author_count);
                     setGenres(res.data.data.genre_count);
                 })
@@ -62,9 +63,10 @@ const Home = () => {
                             <List.Item>
                                 Copies: {dataSpinner(copies, 'bookinstances')}
                             </List.Item>
+                            {/* // FIXME Retrieve available copies
                             <List.Item>
                                 Available copies: {dataSpinner(copiesAvailable, 'bookinstances')}
-                            </List.Item>
+                            </List.Item> */}
                             <List.Item>
                                 Authors: {dataSpinner(authors, 'authors')}
                             </List.Item>
