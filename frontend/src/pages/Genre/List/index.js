@@ -31,16 +31,18 @@ const List = (props) => {
 
     useEffect(() => {
         handleDeleted();
-        api
-            .get('/catalog/genres')
-            .then(res => {
-                setGenres(res.data.genre_list);
-            })
-            .catch(err => {
-                console.log(err)
-                throw new Error(err);
-                // TODO handle api error
-            });
+        try {
+            api
+                .get('/catalog/genres')
+                .then(res => {
+                    setGenres(res.data.genre_list);
+                })
+                .catch(err => {
+                    throw new Error(err);
+                });
+        } catch (error) {
+            throw new Error(error);
+        }
 
     }, [handleDeleted]);
 

@@ -83,12 +83,12 @@ const Create = (props) => {
                         }
                     })
                     .catch(err => {
-                        console.log(err);
                         setIsLoading(isLoading => !isLoading);
+                        throw new Error(err);
                     })
 
             } catch (error) {
-                console.log(error);
+                throw new Error(error);
             }
         },
         [id, selectedBook, imprint, selectedStatus, date, statusOptions, isUpdating, history, toggleSaved]

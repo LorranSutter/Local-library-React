@@ -58,10 +58,9 @@ const Detail = (props) => {
                 })
                 .catch((err) => {
                     throw new Error(err);
-                    // TODO handle api error
                 })
         } catch (error) {
-
+            throw new Error(error);
         }
     }, [props, history, title]);
 
@@ -78,20 +77,23 @@ const Detail = (props) => {
 
     useEffect(() => {
         handleUpdated();
-        api
-            .get(`/catalog/book/${props.match.params.id}`)
-            .then(res => {
-                setTitle(res.data.book.title);
-                setAuthor(res.data.book.author);
-                setSummary(res.data.book.summary);
-                setISBN(res.data.book.isbn);
-                setGenre(res.data.book.genre);
-                setBookInstances(res.data.book_instances);
-            })
-            .catch(err => {
-                console.log(err)
-                // TODO handle api error
-            });
+        try {
+            api
+                .get(`/catalog/book/${props.match.params.id}`)
+                .then(res => {
+                    setTitle(res.data.book.title);
+                    setAuthor(res.data.book.author);
+                    setSummary(res.data.book.summary);
+                    setISBN(res.data.book.isbn);
+                    setGenre(res.data.book.genre);
+                    setBookInstances(res.data.book_instances);
+                })
+                .catch(err => {
+                    throw new Error(err);
+                });
+        } catch (error) {
+            throw new Error(error);
+        }
 
     }, [props, handleUpdated]);
 
