@@ -12,6 +12,8 @@ const mongoose = require('mongoose');
 
 const MONGOURI = "mongodb+srv://lorran:BCDV1007@cluster0-lyl06.gcp.mongodb.net/local_library_test?retryWrites=true&w=majority";
 
+// TODO Handle status model
+
 describe('Book', () => {
 
     beforeAll(async () => {

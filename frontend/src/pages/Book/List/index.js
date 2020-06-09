@@ -33,15 +33,18 @@ const List = (props) => {
 
     useEffect(() => {
         handleDeleted();
-        api
-            .get('/catalog/books')
-            .then(res => {
-                setBooks(res.data.book_list);
-            })
-            .catch(err => {
-                console.log(err)
-                // TODO handle api error
-            });
+        try {
+            api
+                .get('/catalog/books')
+                .then(res => {
+                    setBooks(res.data.book_list);
+                })
+                .catch(err => {
+                    throw new Error(err);
+                });
+        } catch (error) {
+            throw new Error(error);
+        }
 
     }, [handleDeleted]);
 

@@ -7,6 +7,7 @@ const compression = require('compression');
 const cors = require('cors');
 
 const indexRouter = require('./routes/index');
+const statusRouter = require('./routes/status');
 const authorRouter = require('./routes/author');
 const genreRouter = require('./routes/genre');
 const bookRouter = require('./routes/book');
@@ -23,6 +24,7 @@ app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/catalog', statusRouter);
 app.use('/catalog', authorRouter);
 app.use('/catalog', genreRouter);
 app.use('/catalog', bookRouter);

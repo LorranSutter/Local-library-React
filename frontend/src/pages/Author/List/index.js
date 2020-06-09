@@ -34,15 +34,18 @@ const List = (props) => {
 
     useEffect(() => {
         handleDeleted();
-        api
-            .get('/catalog/authors')
-            .then(res => {
-                setAuthors(res.data.author_list);
-            })
-            .catch(err => {
-                console.log(err)
-                // TODO handle api error
-            });
+        try {
+            api
+                .get('/catalog/authors')
+                .then(res => {
+                    setAuthors(res.data.author_list);
+                })
+                .catch(err => {
+                    throw new Error(err);
+                });
+        } catch (error) {
+            throw new Error(error);
+        }
 
     }, [handleDeleted]);
 

@@ -23,6 +23,7 @@ const Detail = (props) => {
 
     const [id, setId] = useState('')
     const [bookInstance, setBookInstance] = useState([]);
+    const [status, setStatus] = useState('');
     const [book, setBook] = useState([]);
     const [activeModal, setActiveModal] = useState(false);
     const [updatedMsg, setUpdatedMsg] = useState('');
@@ -54,10 +55,9 @@ const Detail = (props) => {
                 })
                 .catch((err) => {
                     throw new Error(err);
-                    // TODO handle api error
                 })
         } catch (error) {
-
+            throw new Error(error);
         }
     }, [props, history]);
 
@@ -71,17 +71,21 @@ const Detail = (props) => {
 
     useEffect(() => {
         handleUpdated();
-        api
-            .get(`/catalog/bookinstance/${props.match.params.id}`)
-            .then(res => {
-                setId(res.data.bookinstance._id);
-                setBookInstance(res.data.bookinstance);
-                setBook(res.data.bookinstance.book);
-            })
-            .catch(err => {
-                console.log(err)
-                // TODO handle api error
-            });
+        try {
+            api
+                .get(`/catalog/bookinstance/${props.match.params.id}`)
+                .then(res => {
+                    setId(res.data.bookinstance._id);
+                    setStatus(res.data.bookinstance.status.name);
+                    setBookInstance(res.data.bookinstance);
+                    setBook(res.data.bookinstance.book);
+                })
+                .catch(err => {
+                    throw new Error(err);
+                });
+        } catch (error) {
+            throw new Error(error);
+        }
 
     }, [props, handleUpdated]);
 
@@ -99,7 +103,7 @@ const Detail = (props) => {
                             {bookInstance.imprint}
                         </TextContainer>
                         <TextContainer>
-                            <TextStyle variation="strong">Status: <StatusColor status={bookInstance.status} /></TextStyle>
+                            <TextStyle variation="strong">Status: <StatusColor status={status} /></TextStyle>
                         </TextContainer>
                         <TextContainer>
                             <TextStyle variation="strong">Due back: </TextStyle>

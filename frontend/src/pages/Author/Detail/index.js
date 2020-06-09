@@ -59,10 +59,9 @@ const Detail = (props) => {
                 })
                 .catch((err) => {
                     throw new Error(err);
-                    // TODO handle api error
                 })
         } catch (error) {
-
+            throw new Error(error);
         }
     }, [props, history, firstName, familyName]);
 
@@ -88,8 +87,7 @@ const Detail = (props) => {
                 setAuthorBooks(res.data.author_books);
             })
             .catch(err => {
-                console.log(err)
-                // TODO handle api error
+                throw new Error(err);
             });
 
     }, [props, handleUpdated]);
