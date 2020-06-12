@@ -57,7 +57,7 @@ cd ../frontend
 npm install
 ```
 
-Now you will need two opened terminals to run the project. One for the backend and another one for the frontend or mobile.
+Now you will need two opened terminals to run the project. One for the backend and another one for the frontend.
 
 Backend will run on http://localhost:5000/
 
