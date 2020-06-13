@@ -100,12 +100,13 @@ node populatedb.js
 
 ## :book: Resources and technologies :computer:
 
-- [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website)
-- [Endpoint testing](https://zellwk.com/blog/endpoint-testing/)
-- [Polaris system design](https://polaris.shopify.com/components/get-started)
-- [Express](http://expressjs.com/)
-- [MongoDB](https://www.mongodb.com/)
-- [Async](https://caolan.github.io/async/v3/)
-- [Express validator](https://express-validator.github.io/docs/)
-- [ReactJS](https://reactjs.org/)
-- [Jest](https://jestjs.io/)
+- [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website) - tutorial to build local library
+- [Endpoint testing](https://zellwk.com/blog/endpoint-testing/) - article about testing
+- [Polaris](https://polaris.shopify.com/) - design system
+- [Express](http://expressjs.com/) - web application framework
+- [MongoDB](https://www.mongodb.com/) - NoSQL database
+- [Async](https://caolan.github.io/async/v3/) - library to perform asynchronous operations
+- [Express validator](https://express-validator.github.io/docs/) - middleware to validate data
+- [ReactJS](https://reactjs.org/) - frontend library
+- [Axios](https://www.npmjs.com/package/axios) - HTTP requests
+- [Jest](https://jestjs.io/) - library for tests
