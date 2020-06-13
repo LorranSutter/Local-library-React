@@ -12,8 +12,9 @@ This application was developed using <a href='https://reactjs.org/'>React</a> as
 
 <p align="center">
     <a href='#straight_ruler-Development-pipeline-and-challenges'>Development and challenges</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-    <a href="#runner-how-to-run">How to run</a>&nbsp;&nbsp;|&nbsp;&nbsp;    
-    <a href="#book-Resources-and-technologies-computer">Resources and technologies</a>
+    <a href="#runner-how-to-run">How to run</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="#book-Resources">Resources</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a href="#computer-Technologies">Technologies</a>
 </p>
  
 <div align="center">
@@ -97,11 +98,13 @@ MONGOURI = <your-url>
 # Run script
 node populatedb.js
 ```
-
-## :book: Resources and technologies :computer:
+## :book: Resources
 
 - [Developer Mozilla](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website) - tutorial to build local library
 - [Endpoint testing](https://zellwk.com/blog/endpoint-testing/) - article about testing
+
+## :computer: Technologies
+
 - [Polaris](https://polaris.shopify.com/) - design system
 - [Express](http://expressjs.com/) - web application framework
 - [MongoDB](https://www.mongodb.com/) - NoSQL database
